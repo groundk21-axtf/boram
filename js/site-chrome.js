@@ -4,7 +4,7 @@
 
 const SITE_CONFIG = {
   // 헤더
-  logoUrl: 'https://tear-beautifully-farmer-clubs.trycloudflare.com/images/logo-boram.svg',
+  logoUrl: 'images/logo-boram.svg',
   homeUrl: 'index.html',
   // GNB — 빌더의 페이지 키와 매핑 (tms2-builder.html?page=KEY로 이동 → 빌더가 해당 페이지 표시)
   gnbPages: [  ],
