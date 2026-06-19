@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>상품 상세</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/preview.css">     <!-- .ps-* 모달/드로어/폼 공용 스타일 -->
+<link rel="stylesheet" href="css/search-results.css">  <!-- 사이트 헤더·푸터 + 공용 스타일 -->
+<link rel="stylesheet" href="css/booking-panel.css">
+<link rel="stylesheet" href="css/product-detail.css">
+<style>
+  body { --t-primary: #2563EB; --t-primary-strong: #1D4ED8; --t-text: #1A1A1A; --t-text-2: #555; --t-bg: #FAFAFA; --t-surface: #FFFFFF; --t-radius: 6px;
+         /* standalone 페이지에선 빌더 어드민 크롬이 없으므로 0으로 override */
+         --topbar-h: 0px; --panel-l: 0px; --panel-r: 0px; }
+  .ps-mnav-backdrop[data-sc-injected] { position: fixed !important; inset: 0 !important; }
+</style>
+</head>
+<body>
+
+<!-- 사이트 헤더 (site-chrome.js 자동 주입) -->
+<div id="srSiteHeader" data-active-page=""></div>
+<script src="js/site-chrome.js"></script>
+
+<main class="pd-page">
+  <!-- 1) 상단: 갤러리 (좌) + 상품정보 헤더 (우) — 페이지 풀폭 -->
+  <div class="pd-top">
+    <section class="pd-gallery" id="pdGallery"></section>
+    <header class="pd-header" id="pdHeader"></header>
+  </div>
+
+  <!-- 2) 본문 섹션 (좌) + 예약 사이드바 (우) -->
+  <div class="pd-content">
+    <article class="pd-main">
+      <section class="pd-section">
+        <h2 class="pd-section-title">상세 정보</h2>
+        <div class="pd-desc" id="pdDesc"></div>
+      </section>
+
+      <section class="pd-section">
+        <h2 class="pd-section-title">여행 일정</h2>
+        <div class="pd-itinerary" id="pdItinerary"></div>
+      </section>
+
+      <section class="pd-section">
+        <h2 class="pd-section-title">포함·불포함 사항</h2>
+        <div class="pd-includes" id="pdIncludes"></div>
+      </section>
+
+
+      <section class="pd-section">
+        <h2 class="pd-section-title">이용조건 및 유의사항</h2>
+        <div class="pd-rich" id="pdNotice"></div>
+      </section>
+
+      <section class="pd-section">
+        <h2 class="pd-section-title">환불 규정</h2>
+        <div class="pd-rich" id="pdRefund"></div>
+      </section>
+
+      <div class="pd-operator-info" id="pdOperatorInfo"></div>
+    </article>
+
+    <aside class="bk-booking" id="pdBookingPanel">
+      <div class="bk-sheet-handle" aria-hidden="true"></div>
+
+      <div class="bk-booking-card" id="pdBookingCard">
+        <div class="bk-booking-head">
+          <span class="bk-booking-label">예약하기</span>
+          <button class="bk-sheet-close" id="pdSheetClose" type="button" aria-label="닫기">×</button>
+        </div>
+
+        <!-- 출발 날짜 선택 -->
+        <div class="bk-block">
+          <div class="bk-block-label">날짜 선택</div>
+          <div class="bk-calendar" id="pdCalendar"></div>
+          <div class="pd-cal-legend">
+            <span><i class="dot avail"></i>출발예정</span>
+            <span><i class="dot confirmed"></i>출발확정</span>
+            <span><i class="dot full"></i>마감</span>
+            <span><i class="dot off"></i>미운영</span>
+          </div>
+        </div>
+
+        <!-- 요금 정보 — 날짜 선택 후 활성화 -->
+        <div class="bk-block pd-options-block" id="pdOptionsBlock" hidden>
+          <div class="bk-block-label" id="pdQtyLabel">요금 정보</div>
+          <div id="pdQty"></div>
+        </div>
+
+        <button class="bk-book-btn" id="pdBookBtn" disabled>날짜를 선택하세요</button>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<!-- 모바일/태블릿: 하단 고정 [예약하기] 버튼 + 시트 백드롭 -->
+<div class="bk-mobile-bar" id="pdMobileBar">
+  <button class="bk-mobile-bar-btn" id="pdMobileBookBtn" type="button">예약하기</button>
+</div>
+<div class="bk-sheet-backdrop" id="pdSheetBackdrop"></div>
+
+<!-- 이미지 라이트박스 (여행 일정 이미지 클릭 시) -->
+<div class="pd-lightbox" id="pdLightbox" hidden>
+  <button class="pd-lightbox-close" id="pdLightboxClose" type="button" aria-label="닫기">×</button>
+  <img class="pd-lightbox-img" id="pdLightboxImg" alt="">
+</div>
+
+<!-- 사이트 푸터 (site-chrome.js 자동 주입) -->
+<div id="srSiteFooter"></div>
+
+<!-- 데이터 + 페이지 로직 -->
+<script src="data/product-detail.js"></script>
+<script src="js/product-detail.js"></script>
+
+</body>
+</html>

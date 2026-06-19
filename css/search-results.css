@@ -1,0 +1,1827 @@
+/* search-results.css — 고객 검색결과 페이지 (사이트 헤더 + 검색바 + 필터 + 결과 카드) */
+
+:root {
+  --sr-primary: #2563EB;
+  --sr-primary-strong: #1D4ED8;
+  --sr-primary-soft: #DBEAFE;
+  --sr-bg: #F8FAFC;
+  --sr-surface: #FFFFFF;
+  --sr-border: #E5E7EB;
+  --sr-border-soft: #F1F2F4;
+  --sr-text-1: #0F172A;
+  --sr-text-2: #475569;
+  --sr-text-3: #94A3B8;
+  --sr-text-4: #CBD5E1;
+  --sr-success: #16A34A;
+  --sr-error: #DC2626;
+  --sr-shadow: 0 1px 2px rgba(15,23,42,.05);
+  --sr-shadow-lg: 0 10px 30px rgba(15,23,42,.08);
+  --sr-content-max: 1160px;
+}
+
+html, body { background: var(--sr-bg); color: var(--sr-text-1); min-width: 0; overflow: auto; }
+body { display: block; }
+
+/* ===========================================================
+   1) 사이트 헤더 — 배경은 풀와이드, 내부는 max-width 1240px로 본문과 정렬
+   =========================================================== */
+.sr-site-header {
+  background: #fff;
+  border-bottom: 1px solid #EAEAEA;
+  position: sticky; top: 0; z-index: 30;
+}
+.sr-site-header-inner {
+  max-width: var(--sr-content-max);
+  margin: 0 auto;
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.sr-site-logo {
+  height: 28px; width: auto;
+  display: block; flex-shrink: 0;
+}
+.sr-site-gnb { display: none; gap: 4px; margin-left: 28px; }
+/* 2) GNB 링크 — 밑줄 제거 */
+.sr-site-gnb-link {
+  padding: 8px 14px;
+  font-size: 14px; font-weight: 600;
+  color: var(--sr-text-2);
+  border-radius: 6px;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background .12s, color .12s;
+}
+.sr-site-gnb-link:hover { background: var(--sr-bg); color: var(--sr-text-1); }
+.sr-site-gnb-link.active { color: var(--sr-primary); }
+.sr-site-spacer { flex: 1; }
+.sr-site-actions { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.sr-site-lang {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 12px;
+  font-size: 13px; font-weight: 600;
+  color: var(--sr-text-2);
+  border-radius: 6px;
+  background: transparent;
+}
+.sr-site-lang:hover { background: var(--sr-bg); color: var(--sr-text-1); }
+.sr-site-lang svg { width: 13px; height: 13px; }
+.sr-site-btn {
+  padding: 9px 14px;
+  font-size: 13px; font-weight: 700;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.sr-site-btn.ghost   { color: var(--sr-text-2); }
+.sr-site-btn.ghost:hover { background: var(--sr-bg); color: var(--sr-text-1); }
+.sr-site-btn.outline { color: var(--sr-text-1); border: 1px solid var(--sr-border); background: #fff; }
+.sr-site-btn.outline:hover { border-color: var(--sr-primary); color: var(--sr-primary); }
+.sr-site-btn.primary { color: #fff; background: var(--sr-primary); }
+.sr-site-btn.primary:hover { background: var(--sr-primary-strong); }
+.sr-site-burger {
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  border-radius: 6px;
+  color: var(--sr-text-1);
+  margin-left: auto;
+}
+.sr-site-burger:hover { background: var(--sr-bg); }
+.sr-site-burger svg { width: 22px; height: 22px; }
+
+/* ===========================================================
+   site-chrome.js 모바일 햄버거 드로어
+   =========================================================== */
+#scMobileNav { position: fixed; inset: 0; z-index: 300; }
+#scMobileNav .sc-mnav-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(15,23,42,.55);
+  animation: scFade .15s;
+}
+@keyframes scFade { from { opacity: 0 } to { opacity: 1 } }
+#scMobileNav .sc-mnav-panel {
+  position: absolute; right: 0; top: 0; bottom: 0;
+  width: 84%; max-width: 320px;
+  background: var(--sr-surface);
+  display: flex; flex-direction: column;
+  box-shadow: -10px 0 32px rgba(0,0,0,.18);
+  animation: scSlideIn .22s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes scSlideIn { from { transform: translateX(100%) } to { transform: translateX(0) } }
+#scMobileNav .sc-mnav-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--sr-border-soft);
+}
+#scMobileNav .sc-mnav-title { font-size: 15px; font-weight: 800; color: var(--sr-text-1); }
+#scMobileNav .sc-mnav-close {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  font-size: 22px; color: var(--sr-text-3);
+  border-radius: 8px;
+}
+#scMobileNav .sc-mnav-close:hover { background: var(--sr-bg); color: var(--sr-text-1); }
+#scMobileNav .sc-mnav-list {
+  flex: 1; min-height: 0; overflow-y: auto;
+  display: flex; flex-direction: column;
+  padding: 8px;
+}
+#scMobileNav .sc-mnav-link {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px; font-weight: 600;
+  color: var(--sr-text-1);
+  text-decoration: none;
+}
+#scMobileNav .sc-mnav-link:hover { background: var(--sr-bg); color: var(--sr-primary); }
+#scMobileNav .sc-mnav-actions {
+  padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--sr-border-soft);
+  display: flex; flex-direction: column; gap: 8px;
+}
+#scMobileNav .sc-mnav-btn {
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 700;
+  white-space: nowrap;
+}
+#scMobileNav .sc-mnav-btn.ghost   { color: var(--sr-text-2); background: transparent; }
+#scMobileNav .sc-mnav-btn.ghost:hover { background: var(--sr-bg); color: var(--sr-text-1); }
+#scMobileNav .sc-mnav-btn.outline { color: var(--sr-text-1); border: 1px solid var(--sr-border); background: #fff; }
+#scMobileNav .sc-mnav-btn.outline:hover { border-color: var(--sr-primary); color: var(--sr-primary); }
+#scMobileNav .sc-mnav-btn.primary { color: #fff; background: var(--sr-primary); }
+#scMobileNav .sc-mnav-btn.primary:hover { background: var(--sr-primary-strong); }
+
+/* ===========================================================
+   언어 드롭다운
+   =========================================================== */
+.sr-site-lang-wrap { position: relative; }
+.sr-site-lang-flag { display: inline-block; font-size: 14px; }
+.sr-site-lang-menu {
+  position: absolute; top: calc(100% + 4px); right: 0;
+  min-width: 180px;
+  background: var(--sr-surface);
+  border: 1px solid var(--sr-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(15,23,42,.12);
+  padding: 4px;
+  z-index: 50;
+  animation: scFadeIn .12s;
+}
+.sr-site-lang-option {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 13px; font-weight: 600;
+  color: var(--sr-text-1);
+  text-align: left;
+  background: transparent;
+}
+.sr-site-lang-option:hover { background: var(--sr-bg); }
+.sr-site-lang-option.active { color: var(--sr-primary); }
+.sr-site-lang-option svg { width: 14px; height: 14px; margin-left: auto; color: var(--sr-primary); }
+
+/* ===========================================================
+   공용 모달 (로그인 / 회원가입 / 비회원조회)
+   =========================================================== */
+.sc-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15,23,42,.55);
+  z-index: 400;
+  display: flex; justify-content: center; align-items: center;
+  padding: 20px;
+  animation: scFadeIn .15s;
+}
+@keyframes scFadeIn { from { opacity: 0 } to { opacity: 1 } }
+.sc-modal {
+  background: var(--sr-surface);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 440px;
+  max-height: calc(100vh - 80px);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,.20), 0 4px 12px rgba(0,0,0,.06);
+  position: relative;
+  animation: scModalIn .18s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes scModalIn {
+  from { transform: translateY(10px); opacity: 0 }
+  to   { transform: translateY(0); opacity: 1 }
+}
+.sc-modal-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  font-size: 22px; line-height: 1; color: var(--sr-text-3);
+  border-radius: 8px;
+  z-index: 2;
+}
+.sc-modal-close:hover { background: var(--sr-bg); color: var(--sr-text-1); }
+.sc-modal-head {
+  padding: 22px 24px 12px;
+  border-bottom: 1px solid var(--sr-border-soft);
+}
+.sc-modal-head h3 {
+  margin: 0;
+  font-size: 18px; font-weight: 800;
+  color: var(--sr-text-1); letter-spacing: -.02em;
+}
+.sc-modal-head p {
+  margin: 6px 0 0;
+  font-size: 13px; color: var(--sr-text-3);
+}
+.sc-modal-body {
+  flex: 1; min-height: 0; overflow-y: auto;
+  padding: 18px 24px;
+}
+.sc-modal-foot {
+  display: flex; gap: 8px;
+  padding: 14px 24px 18px;
+  border-top: 1px solid var(--sr-border-soft);
+}
+.sc-modal-foot .sc-btn { flex: 1; }
+.sc-modal-swap {
+  margin-top: 18px;
+  font-size: 13px; color: var(--sr-text-3);
+  text-align: center;
+}
+.sc-modal-swap a { color: var(--sr-primary); font-weight: 700; text-decoration: none; }
+.sc-modal-swap a:hover { text-decoration: underline; }
+
+.sc-form-row { margin-bottom: 14px; }
+.sc-form-row label {
+  display: block;
+  font-size: 12px; font-weight: 700; color: var(--sr-text-2);
+  margin-bottom: 6px;
+}
+.sc-input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--sr-border);
+  border-radius: 8px;
+  font-size: 13.5px;
+  background: var(--sr-surface);
+  color: var(--sr-text-1);
+  transition: border-color .12s, box-shadow .12s;
+}
+.sc-input:focus {
+  outline: none;
+  border-color: var(--sr-primary);
+  box-shadow: 0 0 0 3px var(--sr-primary-soft);
+}
+.sc-form-helper {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 6px 0 4px;
+  font-size: 12.5px;
+}
+.sc-form-link { color: var(--sr-primary); font-weight: 600; text-decoration: none; }
+.sc-form-link:hover { text-decoration: underline; }
+
+.sc-check-list {
+  display: flex; flex-direction: column; gap: 6px;
+  background: var(--sr-bg);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 8px;
+}
+.sc-check {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12.5px; color: var(--sr-text-2);
+  cursor: pointer;
+}
+.sc-check input { width: 14px; height: 14px; accent-color: var(--sr-primary); }
+.sc-check strong { color: var(--sr-primary); font-weight: 700; }
+.sc-check .sc-optional { color: var(--sr-text-3); font-weight: 700; }
+
+.sc-btn {
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-size: 14px; font-weight: 700;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.sc-btn.outline {
+  background: var(--sr-surface);
+  color: var(--sr-text-1);
+  border: 1px solid var(--sr-border);
+}
+.sc-btn.outline:hover { border-color: var(--sr-text-2); }
+.sc-btn.primary {
+  background: var(--sr-primary);
+  color: #fff;
+}
+.sc-btn.primary:hover { background: var(--sr-primary-strong); }
+
+/* ===========================================================
+   3) 검색바 — 메인 페이지(TYPES.searchbar) 마크업·스타일과 동일
+   =========================================================== */
+.sr-search-band {
+  background: linear-gradient(135deg, var(--sr-primary) 0%, var(--sr-primary-strong) 100%);
+  padding: 28px 16px 56px;
+  position: relative;
+}
+.sr-search-wrap {
+  max-width: var(--sr-content-max);
+  margin: 0 auto;
+  position: relative;
+}
+
+/* 왕복/편도 탭 — 카드 좌상단에 살짝 들어가는 형태 */
+.sr-search-tabs {
+  display: flex;
+  width: fit-content;
+  margin-bottom: -1px;
+  position: relative; z-index: 2;
+}
+.sr-trip-tab {
+  padding: 11px 26px;
+  font-size: 13px; font-weight: 600;
+  color: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.16);
+  border-radius: 10px 10px 0 0;
+  transition: background .12s, color .12s;
+}
+.sr-trip-tab + .sr-trip-tab { margin-left: 4px; }
+.sr-trip-tab.active {
+  background: var(--sr-surface);
+  color: var(--sr-text-1);
+  font-weight: 700;
+}
+
+/* 검색 카드 — 메인 페이지의 .ps-search와 동일 그리드 */
+.sr-search {
+  background: var(--sr-surface);
+  margin: 0;
+  padding: 12px;
+  border-radius: 0 12px 12px 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.10), 0 4px 12px rgba(0,0,0,.04);
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;   /* 모바일/태블릿 기본은 세로 스택 */
+  gap: 8px;
+  align-items: stretch;
+}
+
+/* 검색 필드 박스 */
+.sr-search-field {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--sr-bg);
+  border: 1px solid var(--sr-border-soft);
+  position: relative;
+  cursor: pointer;
+  transition: border-color .12s, background .12s;
+}
+.sr-search-field:hover { border-color: var(--sr-primary); background: #fff; }
+.sr-search-field > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.sr-search-field-icon {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+}
+.sr-search-field-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--sr-border);
+  flex-shrink: 0;
+}
+.sr-search-field-label {
+  font-size: 11px; font-weight: 600;
+  color: var(--sr-text-3);
+  margin-bottom: 1px;
+}
+.sr-search-field-value {
+  font-size: 14px; font-weight: 700;
+  color: var(--sr-text-1);
+  white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+/* 편집 가능 출발/도착 입력 — span 과 동일 톤 유지 */
+input.sr-search-input {
+  border: none; background: transparent; outline: none;
+  padding: 0; width: 7.5em; max-width: 7.5em;
+  font-family: inherit;
+}
+input.sr-search-input::placeholder { color: var(--sr-text-3); font-weight: 500; }
+.sr-search-field.merged { gap: 10px; padding: 10px 12px; }
+
+/* 2dep 날짜 선택 — 네이티브 date 입력을 검색바 톤에 맞춤 */
+input.sr-search-date {
+  width: auto; max-width: none;
+  color: var(--sr-text-1); font-weight: 700;
+  cursor: pointer;
+}
+input.sr-search-date::-webkit-calendar-picker-indicator { cursor: pointer; opacity: .55; }
+
+/* 출발/도착 정류장 자동완성 드롭다운 (카드 2 개선) */
+.sr-od-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--sr-surface);
+  border: 1px solid var(--sr-border-soft);
+  border-radius: 10px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.14), 0 4px 12px rgba(0,0,0,.06);
+  z-index: 60;
+  max-height: 280px; overflow-y: auto;
+  padding: 6px;
+  cursor: default;
+}
+.sr-od-dropdown[hidden] { display: none; }
+.sr-od-item {
+  display: flex; align-items: baseline; width: 100%; text-align: left;
+  padding: 9px 12px; border-radius: 7px;
+  font-size: 14px; font-weight: 600; color: var(--sr-text-1);
+  background: transparent; border: none; cursor: pointer;
+}
+.sr-od-item:hover { background: var(--sr-bg); }
+.sr-od-region { color: var(--sr-text-3); font-size: 12px; font-weight: 500; margin-left: 6px; }
+.sr-od-empty { padding: 10px 12px; color: var(--sr-text-3); font-size: 13px; }
+.sr-search-field.merged > div { flex: 1; }
+
+/* SVG 배경 아이콘 — main page와 동일 (출발 녹색 핀, 도착 적색 핀, 캘린더, 인원) */
+.search-pin-from {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2316A34A' stroke='%23fff' stroke-width='1.5'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z'/><circle cx='12' cy='9' r='2.5' fill='%23fff' stroke='none'/></svg>");
+}
+.search-pin-to {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23DC2626' stroke='%23fff' stroke-width='1.5'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z'/><circle cx='12' cy='9' r='2.5' fill='%23fff' stroke='none'/></svg>");
+}
+.search-cal {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='4' width='18' height='18' rx='2'/><line x1='16' y1='2' x2='16' y2='6'/><line x1='8' y1='2' x2='8' y2='6'/><line x1='3' y1='10' x2='21' y2='10'/></svg>");
+}
+.search-person {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>");
+}
+
+.sr-search-go {
+  background: var(--sr-primary);
+  color: #fff;
+  border-radius: 8px;
+  padding: 14px 22px;
+  font-size: 14px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  align-self: stretch;
+  white-space: nowrap;
+  transition: background .12s;
+}
+.sr-search-go:hover { background: var(--sr-primary-strong); }
+.sr-search-go svg { width: 16px; height: 16px; }
+
+/* ===========================================================
+   노선 타입 탭
+   =========================================================== */
+.sr-type-tabs {
+  display: flex;
+  background: var(--sr-surface);
+  border-bottom: 1px solid var(--sr-border);
+  margin-top: -40px;
+  position: relative; z-index: 2;
+  padding: 0 16px;
+  max-width: var(--sr-content-max); margin-left: auto; margin-right: auto;
+}
+.sr-type-tab {
+  padding: 12px 16px;
+  font-size: 13px; font-weight: 600;
+  color: var(--sr-text-3);
+  border-bottom: 2px solid transparent;
+  transition: color .12s, border-color .12s;
+  white-space: nowrap;
+}
+.sr-type-tab.active {
+  color: var(--sr-primary);
+  border-bottom-color: var(--sr-primary);
+}
+.sr-type-tab:hover:not(.active) { color: var(--sr-text-2); }
+
+/* ===========================================================
+   메인 컨테이너 + 필터
+   =========================================================== */
+.sr-main {
+  padding: 16px;
+  max-width: var(--sr-content-max);
+  margin: 0 auto;
+}
+
+.sr-filter { display: none; }
+.sr-mobile-filter-toggle {
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  border: 1px solid var(--sr-border);
+  border-radius: 8px;
+  color: var(--sr-text-2);
+  background: var(--sr-surface);
+  flex-shrink: 0;
+}
+.sr-mobile-filter-toggle:hover { color: var(--sr-primary); border-color: var(--sr-primary); }
+.sr-mobile-filter-toggle svg { width: 16px; height: 16px; }
+
+/* ===========================================================
+   결과 영역 + 카드
+   =========================================================== */
+.sr-results { width: 100%; }
+.sr-results-head {
+  display: flex; flex-direction: column;
+  margin-bottom: 14px;
+  gap: 6px;
+}
+.sr-results-title {
+  font-size: 18px; font-weight: 800; letter-spacing: -.02em;
+  color: var(--sr-text-1);
+  border-bottom: 1px solid var(--sr-border);
+  padding-bottom: 8px;
+}
+.sr-results-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+}
+.sr-results-meta .sr-mobile-filter-toggle { margin-left: auto; }
+.sr-results-count {
+  font-size: 16px; color: var(--sr-text-1); font-weight: 700;
+}
+.sr-results-count strong {
+  color: var(--sr-primary);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-cards { display: flex; flex-direction: column; gap: 12px; }
+
+/* ===========================================================
+   가는편 선택 pill (일반노선+왕복) — 카드 위 띠 배너
+   =========================================================== */
+.sr-outbound-pill {
+  background: var(--sr-primary-soft);
+  border: 1px solid #BFDBFE;
+  border-radius: 12px;
+  padding: 14px 16px 16px;
+  margin-bottom: 20px;
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.sr-outbound-head {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--sr-text-1);
+}
+.sr-outbound-badge {
+  background: var(--sr-primary-strong);
+  color: #fff;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .02em;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.sr-outbound-date {
+  font-size: 14px;
+  font-weight: 600; 
+  color: var(--sr-text-1);
+}
+.sr-outbound-close {
+  margin-left: auto;
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  color: var(--sr-text-3);
+  background: transparent;
+  border-radius: 6px;
+  transition: color .12s, background .12s;
+}
+.sr-outbound-close:hover { color: var(--sr-text-1); background: rgba(15,23,42,.06); }
+.sr-outbound-close svg { width: 16px; height: 16px; }
+
+.sr-outbound-body {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(37,99,235,.18);
+}
+.sr-outbound-route {
+  display: flex; flex-direction: column;
+  gap: 20px;
+  font-size: 13.5px; color: var(--sr-text-1); font-weight: 600;
+}
+.sr-outbound-stop {
+  display: inline-grid;
+  grid-template-columns: 22px 40px auto;
+  align-items: center;
+  gap: 8px;
+}
+.sr-outbound-time {
+  font-weight: 600; font-size: 12px;
+  color: var(--sr-text-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.sr-outbound-name { 
+  font-weight: 600; 
+}
+
+.sr-outbound-price {
+  text-align: right;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.sr-outbound-price-value {
+  font-size: 18px; font-weight: 800; color: var(--sr-text-1); letter-spacing: -.01em;
+}
+.sr-outbound-price-note {
+  font-size: 11px; color: var(--sr-text-3);
+}
+
+/* 경로 연결 라인 — 출발지 마커 아래에서 도착지 마커 위까지 점선 */
+.sr-outbound-route .sr-outbound-stop { position: relative; }
+.sr-outbound-route .sr-outbound-stop:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 6.25px;
+  top: 18px;
+  bottom: -22px;
+  width: 0;
+  border-left: 1.5px dashed rgba(37,99,235,.45);
+  pointer-events: none;
+}
+
+.sr-card {
+  background: var(--sr-surface);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: var(--sr-shadow);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  transition: box-shadow .12s, border-color .12s;
+}
+.sr-card:hover {
+  border-color: var(--sr-primary-soft);
+  box-shadow: 0 4px 16px rgba(15,23,42,.06);
+}
+
+/* 모바일/태블릿 카드 헤더: 1행 [노선명] / 2행 [차량정보 풀폭] */
+.sr-card-head {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "name"
+    "vehicle";
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 6px;
+  padding-bottom: 12px;
+}
+.sr-card-name    { grid-area: name; }
+.sr-card-vehicle { grid-area: vehicle; }
+
+/* 태블릿 이상 — 카드 헤더 1줄 (노선명 좌 · 운행정보 우) */
+@media (min-width: 720px) {
+  .sr-card-head {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "name vehicle";
+    row-gap: 0;
+  }
+}
+
+/* 모바일 — 순환노선 헤더 우측 정보(.sr-card-circular-info)는 좌측 정렬 */
+@media (max-width: 719px) {
+  .sr-card-circular-info {
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+  }
+}
+
+/* 3) 운영사 로고 — 사이트 헤더 로고와 동일 이미지 */
+.sr-card-operator-logo {
+  display: inline-grid;
+  padding: 0;
+  background: transparent;
+}
+.sr-card-operator-logo img {
+  display: block;
+  height: 20px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.sr-card-name {
+  font-size: 14px; font-weight: 700; color: var(--sr-text-1);
+  letter-spacing: -.01em;
+}
+.sr-card-vehicle {
+  font-size: 11px; color: var(--sr-text-3);
+}
+.sr-card-seats {
+  grid-area: vehicle;
+  font-size: 12px;
+  color: var(--sr-primary);
+  font-weight: 600;
+}
+.sr-card-seats.urgent {
+  color: var(--sr-error);
+}
+.sr-card-seats.sold-out {
+  color: var(--sr-text-3);
+}
+
+/* 순환노선 카드 헤더 우측 — 운행간격 + 총 정류장 수 (1줄, 공간 좁으면 줄바꿈) */
+.sr-card-circular-info {
+  grid-area: vehicle;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-start;
+  column-gap: 8px;
+  row-gap: 2px;
+  text-align: right;
+}
+.sr-card-interval {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sr-primary);
+  font-variant-numeric: tabular-nums;
+}
+.sr-card-stops-total {
+  font-size: 11px;
+  color: var(--sr-text-3);
+}
+/* stops-total 다음에 오는 interval 앞에 가운데점(·) 구분자 */
+.sr-card-stops-total + .sr-card-interval::before {
+  content: '·';
+  margin-right: 6px;
+  color: var(--sr-text-4);
+  font-weight: 700;
+}
+
+/* === 5) 카드 본문 — align-items: start (펼침 시 도착지가 아래로, 출발지는 그대로) === */
+.sr-card-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+/* 경로 */
+.sr-card-route {
+  display: grid; gap: 10px;
+  position: relative;
+}
+/* 경유지 wrapper는 grid에 투명하게 참여 — 자식 mid stop이 부모 grid gap을 그대로 사용 */
+[data-stops-list] { display: contents; }
+.sr-card-stop {
+  display: grid;
+  grid-template-columns: 22px 40px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  position: relative;
+}
+.sr-card-stop-marker {
+  width: 14px; height: 14px; border-radius: 50%;
+  position: relative; z-index: 1;
+}
+.sr-card-stop-marker.pickup  { background: var(--sr-success); box-shadow: 0 0 0 3px rgba(22,163,74,.12); }
+.sr-card-stop-marker.arrival { background: var(--sr-error);   box-shadow: 0 0 0 3px rgba(220,38,38,.12); }
+.sr-card-stop-marker.mid {
+  width: 6px; height: 6px; background: var(--sr-text-4);
+  margin-left: 4px;
+}
+.sr-card-stop-marker.chip-anchor {
+  width: 6px; height: 6px; background: transparent;
+  margin-left: 4px;
+}
+.sr-card-stop:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  /* marker(22px col, 14px ⌀) — center at 6px */
+  left: 6px; top: 18px; bottom: -12px;
+  width: 1.5px; border-left: 1.5px dashed var(--sr-text-4);
+}
+.sr-card-stop-text {
+  display: inline-flex; align-items: center; gap: 4px;
+  min-width: 0;
+}
+.sr-card-stop-time {
+  font-weight: 600; font-size: 12px;
+  color: var(--sr-text-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.sr-card-stop.mid .sr-card-stop-time { color: var(--sr-text-3); font-weight: 500; font-size: 11.5px; }
+.sr-card-stop-name { font-weight: 600; }
+.sr-card-stop.mid .sr-card-stop-name { color: var(--sr-text-2); font-weight: 500; font-size: 13px; }
+.sr-card-stop-dwell {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 6px;
+  background: var(--sr-primary-soft);
+  color: var(--sr-primary-strong);
+  border-radius: 4px;
+  font-size: 10.5px; font-weight: 600;
+  line-height: 1.5;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+.sr-card-map-btn {
+  width: 18px; height: 18px;
+  display: inline-grid; place-items: center;
+  color: var(--sr-text-3);
+}
+.sr-card-map-btn svg { width: 14px; height: 14px; }
+.sr-card-map-btn:hover { color: var(--sr-primary); }
+
+/* === 4) [N회 경유] chip — 텍스트 기준 fit-content 넓이, 좌측 정렬 === */
+.sr-card-stop.chip-row { grid-template-columns: 22px 60px auto; align-items: center; }
+.sr-card-stops-chip {
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 3px 6px;
+  background: var(--sr-primary-soft);
+  color: var(--sr-primary-strong);
+  border-radius: 4px;
+  font-size: 11px; font-weight: 400;
+  width: fit-content;
+  justify-self: start;
+  white-space: nowrap;
+  transition: background .12s;
+}
+.sr-card-stops-chip:hover { background: #BFDBFE; }
+.sr-card-stops-chip svg { width: 10px; height: 10px; transition: transform .15s; }
+.sr-card-stops-chip.open svg { transform: rotate(180deg); }
+
+/* 직행 (경유지 없음) */
+.sr-card-direct {
+  display: inline-flex; align-items: center;
+  padding: 3px 8px;
+  background: var(--sr-primary-soft);
+  color: var(--sr-primary-strong);
+  border-radius: 4px;
+  font-size: 11px; font-weight: 400;
+  width: fit-content;
+  justify-self: start;
+  white-space: nowrap;
+}
+
+/* ===========================================================
+   순환 노선 U-chart 레이아웃 (layoutMode: 'uchart')
+   - 상단 행: 출발 → ... → 우측
+   - 우측 실선: 상단 우측 ↔ 하단 우측
+   - 하단 행: 도착(좌) ← ... ← 우측
+   - 좌측 점선 + 화살표: 하단 좌측(도착) → 상단 좌측(출발) 루프백
+   =========================================================== */
+.sr-card-route-uchart {
+  /* .sr-card-route 가 display:grid; gap:10px 를 상속하므로 명시적으로 block 으로 덮어써서
+     row 간격을 --uc-row-gap 으로 정확히 제어 */
+  display: block;
+  position: relative;
+  border-radius: 12px;
+  background: #fff;
+  /* 위/아래 padding 없음 — row1 이 컨테이너 최상단에서 시작
+     → dot center y = dot 반지름(6) = 프레임 top y */
+  --uc-top-y: 6px;
+  --uc-row-h: 120px;
+  --uc-row-gap: 8px;
+  --uc-bridge-h: calc(var(--uc-row-h) + var(--uc-row-gap));
+  /* 양 끝 곡선의 반경 = bridge-h / 2 → 그만큼 + 여유로 dot/이름이 곡선과 안 겹치도록 */
+  --uc-curve-r: calc(var(--uc-bridge-h) / 2.5);
+  padding: 0;
+}
+.sr-uchart-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--uc-cells, 8), 1fr);
+  align-items: start;
+  gap: 10px;
+  height: var(--uc-row-h);
+  /* 양 끝 stadium 곡선 영역(반경 = bridge-h/2 = 32px)을 피해 dot/이름을 안쪽으로 배치 */
+  padding-left: var(--uc-curve-r, 40px);
+  padding-right: var(--uc-curve-r, 40px);
+}
+.sr-uchart-row.bottom {
+  margin-top: var(--uc-row-gap);
+  /* 하단 row 는 dot 위치(상단)는 고정, 이름이 길어지면 아래로 자유롭게 확장 */
+  height: auto;
+}
+/* U-프레임 — 컨테이너 너비 100%, 양 끝이 stadium 곡선으로 처리.
+   좌측 border 만 dashed → 도착 → 출발 루프백 시각화.
+   곡선의 반경 = 프레임 높이의 1/2 = --uc-bridge-h / 2 = 32px → 양 끝 32px가 곡선 영역. */
+.sr-uchart-frame {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--uc-top-y);
+  height: var(--uc-bridge-h);
+  border: 2px solid var(--sr-primary);
+  border-left-style: dashed;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 좌·우 곡선 라인 위의 방향 화살표
+   좌측(점선): 도착 → 출발 루프백 → ↑
+   우측(실선): 가는 흐름 (top → bottom) → ↓
+   y 위치 = top dot 중심 + bridge-h / 2 = 프레임 세로 중점 */
+.sr-uchart-arrow {
+  position: absolute;
+  top: calc(var(--uc-top-y) + var(--uc-bridge-h) / 2 - 7px);
+  width: 14px; height: 14px;
+  display: grid; place-items: center;
+  background: #fff;
+  color: var(--sr-primary);
+  border-radius: 50%;
+  z-index: 2;
+  pointer-events: none;
+}
+.sr-uchart-arrow svg { width: 12px; height: 12px; }
+.sr-uchart-arrow.left  { left: -7px; }    /* 좌측 곡선 최외곽(x=0)에 중앙 정렬 */
+.sr-uchart-arrow.right { right: -7px; }   /* 우측 곡선 최외곽에 중앙 정렬 */
+
+.sr-uchart-stop {
+  display: flex; flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background .12s;
+}
+.sr-uchart-stop:hover .sr-uchart-name,
+.sr-uchart-stop:focus-visible .sr-uchart-name { color: var(--sr-primary); }
+.sr-uchart-stop:focus-visible { outline: 2px solid var(--sr-primary); outline-offset: 2px; }
+.sr-uchart-dot {
+  width: 14px; height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  border: 2px solid var(--sr-primary);
+  margin-bottom: 3px;
+}
+.sr-uchart-badge {
+  background: var(--sr-primary);
+  color: #fff;
+  font-size: 10.5px; font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.sr-uchart-name {
+  font-size: 13.5px;   /* 정거장명 가독성 — PC 100%에서도 명확히 (TMS-A-102) */
+  color: var(--sr-text-2);
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.35;
+  /* 셀 폭 안에서만 표시 — 넘치면 줄바꿈, 최대 3줄 + 말줄임 */
+  width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 모바일 fallback — U-chart 대신 세로 리스트 */
+.sr-card-route-uchart-list { display: none; }
+.sr-uchart-list-stop {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  position: relative;
+}
+.sr-uchart-list-marker {
+  display: grid; place-items: center;
+  position: relative;
+  z-index: 1;
+}
+.sr-uchart-list-dot {
+  width: 8px; height: 8px;
+  background: var(--sr-primary);
+  border-radius: 50%;
+}
+.sr-uchart-list-stop .sr-uchart-badge {
+  /* 출발/도착 뱃지 — 리스트 컨텍스트에 맞춰 폭 자동 */
+  display: inline-block;
+}
+.sr-uchart-list-stop:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 21px;        /* marker 컬럼 중앙 */
+  top: 50%;
+  bottom: -50%;
+  width: 0;
+  border-left: 1.5px dashed var(--sr-text-4);
+  z-index: 0;
+}
+.sr-uchart-list-stop .sr-card-stop-text {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-width: 0;
+}
+.sr-uchart-list-stop .sr-card-stop-name {
+  font-size: 13px; font-weight: 600; color: var(--sr-text-1);
+}
+.sr-uchart-list-stop.mid .sr-card-stop-name { color: var(--sr-text-2); font-weight: 500; font-size: 13px; }
+
+@media (max-width: 720px) {
+  .sr-card-route-uchart { display: none; }
+  .sr-card-route-uchart-list { display: block; }
+}
+
+/* === 가격 정보 ===
+   모바일/태블릿: 상단 divider + 좌측 [요금 + 기준] · 우측 [선택]
+   데스크탑: 우측 컬럼 안에서 위→아래로 (오른쪽 정렬, divider 없음) — 아래 media query에서 override */
+.sr-card-price-block {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "value btn"
+    "note  btn";
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 2px;
+  padding-top: 14px;
+  border-top: 1px solid var(--sr-border-soft);
+  text-align: left;
+}
+.sr-card-price-value { grid-area: value; }
+.sr-card-price-note  { grid-area: note; }
+.sr-card-price-block > .sr-card-select { grid-area: btn; margin-top: 0; }
+.sr-card-price-value { font-size: 18px; font-weight: 800; color: var(--sr-text-1); letter-spacing: -.01em; }
+.sr-card-price-note  { font-size: 11px; color: var(--sr-text-3); }
+.sr-card-select {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--sr-primary);
+  color: #fff;
+  padding: 9px 18px;
+  border-radius: 6px;
+  font-size: 13px; font-weight: 700;
+  margin-top: 4px;
+  transition: background .12s;
+}
+.sr-card-select:hover { background: var(--sr-primary-strong); }
+.sr-card-select svg { width: 13px; height: 13px; }
+.sr-card-select.sold-out,
+.sr-card-select:disabled {
+  background: var(--sr-text-4);
+  color: #fff;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ===========================================================
+   필터 — 공통 (모바일 바텀시트 / 데스크탑 사이드바 둘 다 사용)
+   =========================================================== */
+.sr-filter-group {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--sr-border-soft);
+}
+.sr-filter-group:last-child { border-bottom: none; }
+.sr-filter-group-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.sr-filter-label {
+  font-size: 12px; font-weight: 700; color: var(--sr-text-2);
+  letter-spacing: .01em;
+  text-transform: uppercase;
+}
+.sr-filter-option {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 0;
+  font-size: 13.5px; color: var(--sr-text-2);
+  cursor: pointer;
+  transition: color .12s;
+}
+.sr-filter-option:hover { color: var(--sr-text-1); }
+.sr-filter-option input[type="checkbox"] {
+  width: 16px; height: 16px; accent-color: var(--sr-primary);
+  flex-shrink: 0;
+}
+.sr-filter-option-text {
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* 요일 chip 그룹 — 토글 형식 */
+.sr-filter-day-chips {
+  display: flex; flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.sr-filter-day-chip {
+  min-width: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--sr-border);
+  border-radius: 8px;
+  background: var(--sr-surface);
+  font-size: 13px; font-weight: 600;
+  color: var(--sr-text-2);
+  cursor: pointer;
+  transition: border-color .12s, color .12s, background .12s;
+  text-align: center;
+}
+.sr-filter-day-chip:hover:not(:disabled) {
+  border-color: var(--sr-primary);
+  color: var(--sr-primary);
+}
+.sr-filter-day-chip.active {
+  border-color: var(--sr-primary);
+  color: var(--sr-primary);
+  background: var(--sr-primary-soft);
+}
+.sr-filter-day-chip.disabled,
+.sr-filter-day-chip:disabled {
+  color: var(--sr-text-4);
+  background: var(--sr-bg);
+  border-color: var(--sr-border-soft);
+  cursor: not-allowed;
+}
+
+.sr-filter-option-count {
+  font-size: 11.5px; color: var(--sr-text-3); font-weight: 600;
+}
+
+/* ===========================================================
+   모바일/태블릿 바텀시트
+   =========================================================== */
+.sr-filter-sheet {
+  position: fixed; inset: 0;
+  background: rgba(15,23,42,.55);
+  display: none;
+  z-index: 100;
+  justify-content: center; align-items: flex-end;
+  animation: fadeIn .15s;
+}
+.sr-filter-sheet.open { display: flex; }
+.sr-filter-sheet-body {
+  background: var(--sr-surface);
+  width: 100%;
+  max-width: 520px;
+  border-radius: 18px 18px 0 0;
+  max-height: 88vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 -8px 32px rgba(0,0,0,.16);
+  animation: sheetUp .2s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes sheetUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* 시트 상단 drag handle bar */
+.sr-filter-sheet-handle {
+  width: 36px; height: 4px;
+  background: var(--sr-border);
+  border-radius: 2px;
+  margin: 8px auto 6px;
+}
+
+/* 시트 헤더 (제목 + 초기화 + 닫기) */
+.sr-filter-sheet-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 6px 18px 14px;
+  border-bottom: 1px solid var(--sr-border-soft);
+}
+.sr-filter-sheet-title {
+  flex: 1;
+  font-size: 16px; font-weight: 800; color: var(--sr-text-1);
+  letter-spacing: -.01em;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.sr-filter-sheet-title svg { width: 16px; height: 16px; color: var(--sr-primary); }
+.sr-filter-sheet-reset {
+  font-size: 12.5px; color: var(--sr-text-3); font-weight: 600;
+  padding: 5px 9px;
+  border-radius: 6px;
+  transition: color .12s, background .12s;
+}
+.sr-filter-sheet-reset:hover { color: var(--sr-primary); background: var(--sr-primary-soft); }
+.sr-filter-sheet-close {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  font-size: 22px; color: var(--sr-text-3);
+  border-radius: 8px;
+  background: transparent;
+}
+.sr-filter-sheet-close:hover { background: var(--sr-bg); color: var(--sr-text-1); }
+
+/* 스크롤 영역 */
+.sr-filter-sheet-scroll {
+  flex: 1; min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 시트 푸터 - 결과 보기 버튼 */
+.sr-filter-sheet-foot {
+  padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--sr-border-soft);
+  background: var(--sr-surface);
+}
+.sr-filter-sheet-apply {
+  display: block;
+  width: 100%;
+  background: var(--sr-primary);
+  color: #fff;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px; font-weight: 800;
+  transition: background .15s;
+}
+.sr-filter-sheet-apply:hover { background: var(--sr-primary-strong); }
+
+/* ===========================================================
+   데스크탑 (1024px+)
+   =========================================================== */
+@media (min-width: 1024px) {
+  .sr-site-header-inner { padding: 16px 40px; gap: 32px; }
+  .sr-site-gnb { display: flex; }
+  .sr-site-actions { display: inline-flex; }
+  .sr-site-burger { display: none; }
+
+  .sr-search-band { padding: 32px 40px 64px; }
+
+  /* 메인페이지 .ps-search.has-return 와 동일 그리드 */
+  .sr-search {
+    grid-template-columns: 1.7fr 1fr 1fr 0.7fr auto;
+    padding: 12px;
+    gap: 8px;
+    border-radius: 0 14px 14px 14px;
+    align-items: center;
+  }
+  /* 편도 (date 단일일 때) — 비율 조정 */
+  .sr-search:not(.has-return) {
+    grid-template-columns: 1.1fr 1.2fr 1.2fr 0.7fr auto;
+  }
+
+  .sr-type-tabs { padding: 0 40px; margin: -40px auto 0; }
+
+  /* 필터 사이드바 카드형 */
+  .sr-main {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 28px;
+    padding: 28px 0;
+  }
+  .sr-filter {
+    display: block;
+    background: transparent;
+    position: sticky; top: 84px;
+    align-self: start;
+  }
+  .sr-filter-card {
+    background: var(--sr-surface);
+    border-radius: 12px;
+    box-shadow: var(--sr-shadow);
+    overflow: hidden;
+  }
+  .sr-filter-card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--sr-border-soft);
+    background: linear-gradient(to bottom, #FAFBFE, var(--sr-surface));
+  }
+  .sr-filter-card-title {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 14px; font-weight: 800; color: var(--sr-text-1);
+    letter-spacing: -.01em;
+  }
+  .sr-filter-card-title svg { width: 15px; height: 15px; color: var(--sr-primary); }
+  .sr-filter-reset {
+    font-size: 11.5px; color: var(--sr-text-3); font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: color .12s, background .12s;
+  }
+  .sr-filter-reset:hover { color: var(--sr-primary); background: var(--sr-primary-soft); }
+  /* 데스크탑은 옵션을 좀 더 컴팩트하게 */
+  .sr-filter-option { padding: 7px 0; font-size: 13px; }
+  .sr-filter-option input[type="checkbox"] { width: 14px; height: 14px; }
+
+  .sr-mobile-filter-toggle { display: none; }
+
+  .sr-card { padding: 22px; gap: 18px; }
+  .sr-card-name { font-size: 15px; }
+
+  /* 데스크탑 헤더 — 단일 행 2컬럼 (노선명 · 차량정보) */
+  .sr-card-head {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "name vehicle";
+    row-gap: 0;
+  }
+  /* vehicle — 운행정보가 길어질 수 있으므로 줄바꿈 허용 + 우측 정렬 */
+  .sr-card-vehicle {
+    white-space: normal;
+    text-align: right;
+    max-width: 280px;
+    line-height: 1.4;
+  }
+
+  /* === 본문 — 좌측 경로 + 우측 가격블록 === */
+  .sr-card-body {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 28px;
+  }
+
+  /* 데스크탑 가격블록 — 우상단 컬럼, 우측 정렬, divider 제거 */
+  .sr-card-price-block {
+    display: flex; flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    gap: 6px;
+    padding-top: 0;
+    border-top: none;
+    grid-template-areas: none;
+  }
+  .sr-card-price-value { font-size: 20px; }
+  .sr-card-price-block > .sr-card-select { margin-top: 4px; padding: 11px 22px; }
+
+  /* === 순환노선 U-chart — 본문 1컬럼, 가격블록은 U-chart 아래로 풀폭 배치 === */
+  .sr-card-body:has(.sr-card-route-uchart) {
+    grid-template-columns: 1fr;
+  }
+  .sr-card-body:has(.sr-card-route-uchart) .sr-card-price-block {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "value btn"
+      "note  btn";
+    align-items: center;
+    column-gap: 14px;
+    row-gap: 2px;
+    padding-top: 14px;
+    border-top: 1px solid var(--sr-border-soft);
+    text-align: left;
+  }
+  .sr-card-body:has(.sr-card-route-uchart) .sr-card-price-block > .sr-card-select {
+    margin-top: 0;
+  }
+}
+
+/* ===========================================================
+   상품 카드 (공통) — 검색결과 [순환노선·투어노선·여행상품]
+   3개 탭의 결과 카드를 단일 .sr-pcard-* 시스템으로 통합
+   타입별 차이점:
+   - 여행상품: meta(region) + name + oneliner + keywords + foot
+   - 투어노선: meta(region) + name + info(label-value rows) + foot
+   - 순환노선: name + info(label-value rows) + foot
+   =========================================================== */
+.sr-pcard {
+  background: var(--sr-surface);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr;
+  box-shadow: var(--sr-shadow);
+  transition: box-shadow .15s, transform .15s, border-color .15s;
+}
+.sr-pcard:hover {
+  border-color: var(--sr-primary-soft);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, .08);
+  transform: translateY(-2px);
+}
+
+/* ─ 썸네일 (4:3) — 데스크탑에선 grid stretch */
+.sr-pcard-thumb {
+  position: relative;
+  aspect-ratio: 800 / 600;
+  overflow: hidden;
+  background: var(--sr-text-4);
+}
+.sr-pcard-thumb img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
+}
+
+/* ─ 본문 */
+.sr-pcard-body {
+  padding: 16px 18px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  min-width: 0;
+}
+
+/* ─ 메타 (지역 등) — pin 아이콘 + primary 색 */
+.sr-pcard-meta {
+  display: inline-flex; align-items: center;
+  gap: 8px;
+  font-size: 11.5px; font-weight: 600;
+  color: var(--sr-text-3);
+}
+.sr-pcard-region {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--sr-primary);
+}
+.sr-pcard-region svg { width: 11px; height: 11px; }
+
+/* ─ 노선/상품명 + 하단 디바이더 */
+.sr-pcard-name {
+  font-size: 15px; font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--sr-text-1);
+  line-height: 1.4;
+  margin: 0;
+  padding-bottom: 10px;
+}
+
+/* ─ 한 줄 소개 (여행상품) */
+.sr-pcard-oneliner {
+  font-size: 12.5px; color: var(--sr-text-2); line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─ 키워드 칩 (여행상품) */
+.sr-pcard-keywords {
+  display: flex; flex-wrap: wrap; gap: 4px;
+}
+.sr-pcard-keyword {
+  font-size: 11px; font-weight: 400;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--sr-bg);
+  color: var(--sr-text-2);
+}
+
+/* ─ 정보 행 (순환·투어) */
+.sr-pcard-info {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.sr-pcard-row {
+  display: flex; align-items: flex-start; gap: 14px;
+  font-size: 13px; line-height: 1.5;
+}
+.sr-pcard-label {
+  font-weight: 600;
+  color: var(--sr-text-1);
+  min-width: 64px;
+  flex-shrink: 0;
+}
+.sr-pcard-value {
+  color: var(--sr-text-2);
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+}
+.sr-pcard-value.path {
+  font-variant-numeric: normal;
+  line-height: 1.55;
+}
+
+/* 여행지 경로 — 가로 폴리라인 (점들이 카드 가로폭에 균등 분배 + 사이를 라인이 연결) */
+.sr-pcard-polyline {
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+  padding-top: 2px;
+}
+.sr-pcard-polyline-stop {
+  flex: 1;                        /* 각 stop 이 가로폭을 균등 분배 → 폴리라인이 카드 풀폭 사용 */
+  min-width: 0;
+  display: flex; flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  position: relative;
+  padding: 0 4px;
+}
+/* 가로 연결선 — 좌측 인접 stop과 잇는다 (dot 가운데 보정) */
+.sr-pcard-polyline-stop:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: 5px;                       /* dot 가운데 (12px / 2 = 6, 1px 라인 보정) */
+  right: 50%;
+  left: -50%;
+  height: 2px;
+  background: var(--sr-border);
+  z-index: 0;
+}
+.sr-pcard-polyline-time {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sr-text-2);
+  font-variant-numeric: tabular-nums;
+  min-height: 14px;
+  line-height: 1.2;
+}
+.sr-pcard-polyline-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--sr-text-4);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.sr-pcard-polyline-name {
+  font-size: 11.5px; line-height: 1.3;
+  color: var(--sr-text-2);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: keep-all;
+}
+/* 출발/도착 강조 */
+.sr-pcard-polyline-stop.start .sr-pcard-polyline-dot,
+.sr-pcard-polyline-stop.end .sr-pcard-polyline-dot {
+  background: var(--sr-primary);
+}
+.sr-pcard-polyline-stop.start .sr-pcard-polyline-name,
+.sr-pcard-polyline-stop.end .sr-pcard-polyline-name {
+  color: var(--sr-text-1);
+}
+.sr-pcard-polyline-stop.start .sr-pcard-polyline-time,
+.sr-pcard-polyline-stop.end .sr-pcard-polyline-time {
+  color: var(--sr-primary);
+  font-weight: 700;
+}
+/* 잘린 추가 지점 안내 (dashed dot) */
+.sr-pcard-polyline-stop.more .sr-pcard-polyline-dot {
+  background: var(--sr-success);
+}
+.sr-pcard-polyline-stop.more .sr-pcard-polyline-name {
+  color: var(--sr-text-1);
+  font-style: italic;
+}
+
+/* ─ 푸터 (가격 + 예약버튼) */
+.sr-pcard-foot {
+  display: flex; flex-direction: column; gap: 12px;
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px solid var(--sr-border-soft);
+}
+.sr-pcard-price {
+  display: flex; flex-direction: column; gap: 4px;
+  align-items: flex-start;
+}
+.sr-pcard-price-value {
+  font-size: 18px; font-weight: 800;
+  color: var(--sr-text-1);
+  letter-spacing: -.01em;
+}
+.sr-pcard-price-sub {
+  font-size: 11px;
+  color: var(--sr-text-3);
+  font-weight: 600;
+}
+.sr-pcard-price-note {
+  font-size: 11px;
+  color: var(--sr-text-3);
+}
+.sr-pcard-book-btn {
+  width: 100%;
+  padding: 12px 18px;
+  background: var(--sr-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  transition: background .12s;
+}
+.sr-pcard-book-btn:hover { background: var(--sr-primary-strong); }
+
+/* 카드 그리드 — 1컬럼 stack */
+.sr-cards:has(.sr-pcard) {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* 데스크탑 — 좌측 thumb(3fr) + 우측 body(7fr) 가로 분할
+   thumb 가 body 높이만큼 stretch (행 높이는 body 컨텐츠 기준) */
+@media (min-width: 1024px) {
+  .sr-pcard {
+    display: grid;
+    grid-template-columns: 3fr 7fr;
+    align-items: stretch;
+  }
+  .sr-pcard-thumb {
+    aspect-ratio: auto;
+    width: 100%; height: auto;
+    align-self: stretch;
+  }
+  .sr-pcard-body { padding: 18px 20px; }
+  .sr-pcard-foot {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .sr-pcard-price { flex-shrink: 0; }
+  .sr-pcard-book-btn {
+    width: auto;
+    padding: 12px 28px;
+    flex-shrink: 0;
+  }
+}
+
+/* ===========================================================
+   정류장 정보 모달 (지도 핀 클릭 시 — 메인 페이지 .ps-stop-modal 패턴)
+   =========================================================== */
+.sr-stop-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15,23,42,.55);
+  display: none;
+  z-index: 200;
+  justify-content: center; align-items: center;
+  padding: 20px;
+  animation: fadeIn .12s;
+}
+.sr-stop-modal-backdrop.open { display: flex; }
+.sr-stop-modal {
+  background: var(--sr-surface);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - 80px);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,.18), 0 4px 12px rgba(0,0,0,.06);
+  position: relative;
+}
+.sr-stop-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  font-size: 22px; color: var(--sr-text-3);
+  background: transparent; border-radius: 8px;
+  z-index: 2;
+}
+.sr-stop-close:hover { background: var(--sr-bg); color: var(--sr-text-1); }
+.sr-stop-head {
+  padding: 22px 24px 16px;
+  border-bottom: 1px solid var(--sr-border-soft);
+}
+.sr-stop-head h3 {
+  margin: 0;
+  font-size: 19px; font-weight: 800;
+  color: var(--sr-text-1); letter-spacing: -.02em;
+}
+.sr-stop-scroll {
+  flex: 1; min-height: 0;
+  overflow-y: auto;
+}
+.sr-stop-image {
+  width: calc(100% - 48px);
+  margin: 18px 24px;
+  aspect-ratio: 4/3;
+  background: var(--sr-bg);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.sr-stop-image img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.sr-stop-body {
+  padding: 0 24px 22px;
+}
+.sr-stop-address {
+  font-size: 13px; font-weight: 600;
+  color: var(--sr-text-2, #555);
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+.sr-stop-subtitle {
+  font-size: 15px; font-weight: 700;
+  color: var(--sr-text-1);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+.sr-stop-detail {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--sr-text-2);
+}
+.sr-stop-footer {
+  padding: 14px 24px 18px;
+  border-top: 1px solid var(--sr-border-soft);
+  background: var(--sr-surface);
+}
+.sr-stop-map-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 13px 16px;
+  background: var(--sr-primary); color: #fff;
+  border-radius: 8px;
+  font-size: 14px; font-weight: 700;
+  text-decoration: none;
+  transition: background .15s;
+}
+.sr-stop-map-btn:hover { background: var(--sr-primary-strong); }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===========================================================
+   푸터 (메인 페이지 사이트 푸터와 동일 스타일 — 다크 배경)
+   =========================================================== */
+.sr-footer {
+  background: #1A1A1A;
+  color: #999;
+  padding: 36px 22px;
+}
+.sr-footer-inner {
+  max-width: var(--sr-content-max);
+  margin: 0 auto;
+}
+.sr-footer-tagline {
+  text-align: center;
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #2A2A2A;
+}
+.sr-footer-tagline h3 {
+  color: #fff;
+  font-size: 18px; font-weight: 800;
+  letter-spacing: -.02em;
+  margin: 0 0 12px;
+  white-space: pre-wrap;
+  line-height: 1.35;
+}
+.sr-footer-tagline p {
+  font-size: 13px; line-height: 1.7;
+  color: #BBB;
+  max-width: 480px;
+  margin: 0 auto;
+  white-space: pre-wrap;
+}
+
+.sr-footer-info { margin-bottom: 24px; }
+
+.sr-footer-terms {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.sr-footer-terms-link {
+  font-size: 13px; font-weight: 600;
+  color: #D0D0D0;
+  text-decoration: none;
+  transition: color .12s;
+}
+.sr-footer-terms-link:hover { color: #fff; text-decoration: underline; }
+.sr-footer-terms-sep { color: #555; font-size: 12px; }
+
+.sr-footer-company-name {
+  color: #fff;
+  font-size: 15px; font-weight: 700;
+  margin-bottom: 18px;
+  letter-spacing: -.01em;
+}
+
+.sr-footer-bizinfo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px 24px;
+}
+.sr-footer-bizinfo-row {
+  display: flex;
+  font-size: 12px;
+  color: #999;
+  align-items: baseline;
+}
+.sr-footer-bizinfo-label {
+  font-weight: 500;
+  color: #777;
+  margin-right: 8px;
+  min-width: 92px;
+  flex-shrink: 0;
+}
+
+.sr-footer-platform {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #2A2A2A;
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  letter-spacing: .04em;
+}
+
+/* 데스크탑 — 풀패딩 + 사업자정보 2컬럼 */
+@media (min-width: 1024px) {
+  .sr-footer { padding: 60px 40px 36px; }
+  .sr-footer-tagline {
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+  }
+  .sr-footer-tagline h3 { font-size: 22px; margin-bottom: 14px; }
+  .sr-footer-bizinfo { grid-template-columns: repeat(2, 1fr); }
+}

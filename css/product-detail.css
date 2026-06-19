@@ -1,0 +1,657 @@
+/* product-detail.css — 상품 상세 페이지 (여행 카테고리) */
+
+:root {
+  --pd-primary: var(--sr-primary, #2563EB);
+  --pd-primary-strong: var(--sr-primary-strong, #1D4ED8);
+  --pd-primary-soft: var(--sr-primary-soft, #DBEAFE);
+  --pd-success: var(--sr-success, #16A34A);
+  --pd-success-soft: #DCFCE7;
+  --pd-error: var(--sr-error, #DC2626);
+  --pd-error-soft: #FEE2E2;
+  --pd-warn: #B45309;
+  --pd-warn-soft: #FEF3C7;
+  --pd-text-1: var(--sr-text-1, #0F172A);
+  --pd-text-2: var(--sr-text-2, #475569);
+  --pd-text-3: var(--sr-text-3, #94A3B8);
+  --pd-text-4: var(--sr-text-4, #CBD5E1);
+  --pd-bg: var(--sr-bg, #F8FAFC);
+  --pd-surface: var(--sr-surface, #FFFFFF);
+  --pd-border: var(--sr-border, #E5E7EB);
+  --pd-border-soft: var(--sr-border-soft, #F1F2F4);
+  --pd-content-max: 1240px;
+}
+
+html, body { 
+  background: var(--pd-surface); 
+  color: var(--pd-text-1); 
+  min-width: 0; 
+  overflow: auto; }
+body { display: block; }
+
+/* ===========================================================
+   페이지 컨테이너
+   =========================================================== */
+.pd-page {
+  max-width: var(--pd-content-max);
+  margin: 0 auto;
+  padding: 0 16px 100px;  /* 모바일 하단 액션바 공간 확보 */
+}
+
+/* ===========================================================
+   1) 상단 영역 (갤러리 + 헤더) — 모바일은 위/아래, 데스크탑은 좌/우
+   =========================================================== */
+.pd-top {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin: 16px 0 24px;
+  padding-bottom: 24px;
+  background: var(--pd-surface);
+  border-bottom: 1px solid var(--pd-border-soft);
+}
+
+/* 상품 이미지 (썸네일 1장) */
+.pd-gallery {
+  aspect-ratio: 800 / 600;   /* 4:3 */
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--pd-text-4);
+}
+.pd-gallery .pd-img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
+}
+
+/* ===========================================================
+   2) 본문 + 사이드바
+   =========================================================== */
+.pd-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.pd-main { min-width: 0; }
+/* .bk-booking 공통 — booking-panel.css 참조 */
+
+/* ===========================================================
+   3) 헤더 (카테고리·지역·상품명·한줄소개·키워드) — 카드형
+   =========================================================== */
+.pd-header {
+  min-width: 0;
+}
+.pd-header-meta {
+  display: flex; 
+  flex-wrap: wrap; 
+  align-items: center; 
+  gap: 8px;
+  font-size: 12px; 
+  color: var(--pd-text-3);
+}
+.pd-tag {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.pd-tag.travel  { background: var(--pd-primary-soft); color: var(--pd-primary-strong); }
+.pd-tag.selling { background: var(--pd-success-soft); color: var(--pd-success); }
+.pd-tag.sold    { background: var(--pd-text-4); color: var(--pd-text-2); }
+.pd-meta-sep { color: var(--pd-text-4); }
+/* 헤더의 지역 라벨 — search-results.html의 .sr-travel-region 과 동일 스타일 */
+.pd-meta-link {
+  display: inline-flex; align-items: center;
+  gap: 4px;
+  color: var(--pd-primary);
+  font-weight: 600;
+}
+.pd-meta-link svg { width: 11px; height: 11px; }
+
+/* 타이틀 + 한 줄 소개 + 키워드 묶음 (3요소 그룹) */
+.pd-header-main {
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+
+.pd-title {
+  font-size: 22px; font-weight: 800;
+  color: var(--pd-text-1); letter-spacing: -.02em;
+  line-height: 1.35;
+}
+.pd-oneliner {
+  font-size: 14px; color: var(--pd-text-2);
+  line-height: 1.6;
+}
+.pd-keywords {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  
+}
+.pd-keyword {
+  font-size: 12px; font-weight: 400;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--pd-bg);
+  color: var(--pd-text-2);
+}
+
+/* ===========================================================
+   4) 본문 섹션
+   =========================================================== */
+.pd-section {
+  padding-bottom: 32px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--pd-border-soft);
+}
+.pd-section:last-of-type { border-bottom: none; }
+.pd-section-title {
+  font-size: 17px; font-weight: 800;
+  color: var(--pd-text-1); letter-spacing: -.02em;
+  margin: 0 0 14px;
+  display: flex; align-items: center; gap: 6px;
+}
+.pd-section-title::before {
+  content: '';
+  width: 4px; height: 16px;
+  background: var(--pd-primary);
+  border-radius: 2px;
+}
+
+/* HTML 본문 (description, refund, notice) — 카드형 */
+.pd-desc, .pd-rich {
+  font-size: 13.5px; line-height: 1.75; color: var(--pd-text-2);
+  background: var(--pd-surface);
+}
+.pd-desc h2, .pd-rich h2 {
+  font-size: 16px; font-weight: 800; color: var(--pd-text-1);
+  margin: 18px 0 10px; letter-spacing: -.01em;
+}
+.pd-desc h3, .pd-rich h3 {
+  font-size: 14px; font-weight: 700; color: var(--pd-text-1);
+  margin: 18px 0 6px; letter-spacing: -.01em;
+}
+.pd-desc blockquote, .pd-rich blockquote {
+  background: var(--pd-bg);
+  border-left: 3px solid var(--pd-primary);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 6px 0 16px;
+  font-size: 13px;
+  color: var(--pd-text-2);
+}
+.pd-desc-image, .pd-desc-image figcaption {
+  background: var(--pd-bg);   /* 카드 안 이미지/캡션은 회색 톤 유지 */
+}
+
+/* pd-rich 영역의 blockquote — 인라인 스타일(border/padding/color)을 무시하고 pd-desc blockquote와 동일하게 강제 */
+.pd-rich blockquote {
+  background: var(--pd-bg) !important;
+  border: none !important;
+  border-left: 3px solid var(--pd-primary) !important;
+  border-radius: 6px !important;
+  padding: 10px 14px !important;
+  margin: 6px 0 16px !important;
+  font-size: 13px !important;
+  color: var(--pd-text-2) !important;
+}
+.pd-desc p, .pd-rich p, .pd-desc div, .pd-rich div { margin: 4px 0; }
+.pd-rich ol, .pd-rich ul { padding-left: 20px; margin: 6px 0; }
+.pd-rich ol li, .pd-rich ul li { margin: 4px 0; }
+.pd-rich a { color: var(--pd-primary); text-decoration: underline; }
+
+/* 상세 정보 이미지 갤러리 — description HTML 아래에 표시 */
+.pd-desc-images {
+  display: flex; flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+.pd-desc-image {
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--pd-bg);
+}
+.pd-desc-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+.pd-desc-image figcaption {
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--pd-text-3);
+  background: var(--pd-bg);
+}
+
+/* ===========================================================
+   5) 여행 일정 (timeline)
+   =========================================================== */
+.pd-day {
+  background: var(--pd-surface);
+  margin-bottom: 12px;
+}
+
+/* 여러 날짜 일정 탭 (DAY 1 / DAY 2 ...) */
+.pd-itinerary-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--pd-border-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.pd-itinerary-tabs::-webkit-scrollbar { display: none; }
+.pd-itinerary-tab {
+  padding: 10px 18px;
+  font-size: 13px; font-weight: 700;
+  color: var(--pd-text-3);
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;          /* tab bottom border가 tabs bar 위에 겹쳐 보이도록 */
+  white-space: nowrap;
+  letter-spacing: .02em;
+  transition: color .12s, border-color .12s;
+}
+.pd-itinerary-tab:hover { color: var(--pd-text-1); }
+.pd-itinerary-tab.active {
+  color: var(--pd-primary);
+  border-bottom-color: var(--pd-primary);
+}
+/* 탭 모드일 때 day-title-text — DAY 배지 없이 부제목만 표시 */
+.pd-day-title-text {
+  display: block;
+  font-size: 14px; font-weight: 700;
+  color: var(--pd-text-2);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--pd-border-soft);
+  width: 100%;
+}
+.pd-day-title {
+  font-size: 14px; font-weight: 800;
+  color: var(--pd-text-1);
+  margin-bottom: 14px;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--pd-border-soft);
+  width: 100%;
+}
+.pd-day-badge {
+  display: inline-grid; place-items: center;
+  background: var(--pd-primary);
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+}
+.pd-event {
+  display: grid;
+  grid-template-columns: 36px 18px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 0;
+  position: relative;
+}
+.pd-event-time {
+  font-size: 12px; font-weight: 700;
+  color: var(--pd-primary-strong);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  padding-top: 1px;
+}
+.pd-event-marker {
+  position: relative;
+  width: 18px; height: 18px;
+  display: grid; place-items: center;
+}
+.pd-event-marker-dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--pd-primary);
+  border: 3px solid var(--pd-primary-soft);
+}
+.pd-event-marker.transport .pd-event-marker-dot {
+  background: var(--pd-warn);
+  border-color: var(--pd-warn-soft);
+}
+/* TMS-A-116: 식사·숙박·자유시간·쇼핑 유형별 마커 색상 */
+.pd-event-marker.meal  .pd-event-marker-dot { background: #C2410C; border-color: #FFEDD5; }
+.pd-event-marker.hotel .pd-event-marker-dot { background: #6D28D9; border-color: #EDE9FE; }
+.pd-event-marker.free  .pd-event-marker-dot { background: var(--pd-success); border-color: var(--pd-success-soft); }
+.pd-event-marker.shop  .pd-event-marker-dot { background: #BE185D; border-color: #FCE7F3; }
+.pd-event:not(:last-child) .pd-event-marker::after {
+  content: '';
+  position: absolute;
+  top: 22px; left: 50%;
+  transform: translateX(-50%);
+  width: 1.5px;
+  height: calc(100% + 6px);
+  background: var(--pd-border);
+}
+.pd-event-body { min-width: 0; }
+.pd-event-type {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; letter-spacing: .04em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+.pd-event-type.transport { background: var(--pd-warn-soft); color: var(--pd-warn); }
+.pd-event-type.activity  { background: var(--pd-primary-soft); color: var(--pd-primary-strong); }
+/* TMS-A-116: 식사·숙박·자유시간·쇼핑 유형별 배지 색상 (어드민 라벨과 일치) */
+.pd-event-type.meal  { background: #FFEDD5; color: #C2410C; }
+.pd-event-type.hotel { background: #EDE9FE; color: #6D28D9; }
+.pd-event-type.free  { background: var(--pd-success-soft); color: var(--pd-success); }
+.pd-event-type.shop  { background: #FCE7F3; color: #BE185D; }
+.pd-event-title {
+  font-size: 13.5px; font-weight: 700;
+  color: var(--pd-text-1); letter-spacing: -.01em;
+  margin-bottom: 4px;
+  line-height: 1.45;
+}
+.pd-event-desc {
+  font-size: 12.5px; color: var(--pd-text-2);
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+/* 여행 일정 — 이벤트 이미지 (description 하단, 최대 4장, 한 줄 / 모바일·태블릿 가로 스크롤) */
+.pd-event-images {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;        /* Firefox: 스크롤바 숨김 */
+  -ms-overflow-style: none;     /* IE/구 Edge: 스크롤바 숨김 */
+}
+.pd-event-images::-webkit-scrollbar { display: none; }   /* WebKit(Chrome/Safari): 스크롤바 숨김 */
+/* 더 볼 사진이 있을 때만 우측 페이드 힌트 (JS가 .pd-has-more 토글) */
+.pd-event-images.pd-has-more {
+  -webkit-mask-image: linear-gradient(to right, #000 95%, transparent 100%);
+          mask-image: linear-gradient(to right, #000 95%, transparent 100%);
+}
+.pd-event-image {
+  flex: 0 0 auto;
+  width: 150px;
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--pd-border-soft, #F1F2F4);
+  scroll-snap-align: start;
+  cursor: zoom-in;
+  transition: transform .12s;
+}
+.pd-event-image:hover { transform: translateY(-2px); }
+.pd-event-image img {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+@media (max-width: 540px) {
+  .pd-event-image { width: 150px; }
+}
+
+/* ===========================================================
+   6) 포함·불포함
+   =========================================================== */
+.pd-includes {
+  display: grid; grid-template-columns: 1fr; gap: 14px;
+}
+.pd-include-card {
+  background: var(--pd-surface);
+  border: 1px solid var(--pd-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+.pd-include-card-title {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13.5px; font-weight: 800;
+  margin-bottom: 10px;
+}
+.pd-include-card.includes .pd-include-card-title { color: var(--pd-success); }
+.pd-include-card.excludes .pd-include-card-title { color: var(--pd-error); }
+.pd-include-list {
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 13px; color: var(--pd-text-2);
+}
+.pd-include-list li {
+  display: flex; align-items: flex-start; gap: 8px;
+  list-style: none;
+}
+.pd-include-list svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; }
+.pd-include-card.includes .pd-include-list svg { color: var(--pd-success); }
+.pd-include-card.excludes .pd-include-list svg { color: var(--pd-error); }
+
+/* ===========================================================
+   7) 예약 사이드바 — 공통 styles 는 css/booking-panel.css (.bk-*) 사용
+   여기엔 product-detail 고유의 추가 요소만 정의 (요일 일요일 색 / legend / 날짜 정보 / 텍스트 옵션 등)
+   =========================================================== */
+.bk-cal-dow.sun { color: var(--pd-error); }
+.pd-cal-legend {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 11px; color: var(--pd-text-3);
+}
+.pd-cal-legend i.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.pd-cal-legend i.dot.avail     { background: var(--pd-success); }
+.pd-cal-legend i.dot.confirmed { background: var(--pd-primary); }
+.pd-cal-legend i.dot.full      { background: var(--pd-error); }
+.pd-cal-legend i.dot.off       { background: var(--pd-text-4); }
+
+/* 인원 옵션 — 공통 .bk-qty-* 사용 */
+
+/* 텍스트 옵션 입력 */
+.pd-text-row { margin-bottom: 10px; }
+.pd-text-row:last-child { margin-bottom: 0; }
+.pd-text-row label {
+  display: block;
+  font-size: 12px; font-weight: 600; color: var(--pd-text-2);
+  margin-bottom: 4px;
+}
+.pd-text-row input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--pd-border);
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--pd-surface);
+  color: var(--pd-text-1);
+}
+.pd-text-row input:focus {
+  outline: none;
+  border-color: var(--pd-primary);
+}
+
+/* 합계 / 예약 버튼 — 공통 .bk-summary, .bk-book-btn 사용 */
+
+/* 메타 정보 — pd-header 안 (여행일정 · 최소 출발인원 · 예약/취소)
+   route-detail.html 의 .rd-info-grid 스타일과 동일 (라벨 + 값 / 셀 사이 vertical divider / 위·아래 보더) */
+.pd-meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  padding: 14px;
+  border: 1px solid var(--pd-border-soft);
+  border-radius: 4px;
+  margin-top: 14px;
+}
+.pd-meta-cell {
+  display: flex; flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4px 12px;
+  border-right: 1px solid var(--pd-border-soft);
+  gap: 6px;
+}
+.pd-meta-cell:last-child { border-right: none; }
+.pd-meta-label {
+  font-size: 12.5px; font-weight: 600;
+  color: var(--pd-text-1);
+}
+.pd-meta-value {
+  font-size: 13px; font-weight: 500;
+  color: var(--pd-text-2);
+}
+@media (max-width: 720px) {
+  .pd-meta { grid-template-columns: 1fr 1fr; gap: 12px 0; }
+  .pd-meta-cell:nth-child(2n) { border-right: none; }
+}
+
+/* 모바일/태블릿 액션바·바텀시트 — 공통 styles 는 booking-panel.css 의 .bk-mobile-bar / .bk-sheet-* / .bk-booking 사용 */
+@media (max-width: 1023px) {
+  .pd-page { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+}
+
+/* ===========================================================
+   데스크탑 (1024px+)
+   =========================================================== */
+@media (min-width: 1024px) {
+  .pd-page { padding: 0 80px 80px; }
+
+  /* 데스크탑: 갤러리(좌) + 헤더(우) 좌/우 배치 — route-detail 의 .rd-top-grid 와 동일 비율 */
+  .pd-top {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 48px;
+    margin: 24px 0 32px;
+    align-items: stretch;   /* 양쪽 높이 맞춤 */
+  }
+  .pd-gallery {
+    aspect-ratio: 800 / 600;
+    border-radius: 4px;
+    max-height: 480px;
+    height: 100%;            /* 헤더 높이에 맞춤 (max-height 안에서) */
+  }
+  .pd-header {
+    display: flex; 
+    flex-direction: column;
+    justify-content: flex-start;  /* 텍스트가 카드 안에서 세로 가운데 */
+    gap: 22px;
+  }
+
+  /* 본문 + 사이드바 */
+  .pd-content {
+    grid-template-columns: 1fr 360px;
+    gap: 40px;
+  }
+
+  .pd-title { font-size: 28px; line-height: 1.3; }
+  .pd-oneliner { font-size: 15px; }
+
+  .pd-section-title { font-size: 19px; }
+
+  /* 사이드바 sticky / 카드 스크롤 — 공통 .bk-booking + .bk-booking-card 사용 */
+
+  /* 포함/불포함 — 2컬럼 */
+  .pd-includes { grid-template-columns: 1fr 1fr; }
+
+  .pd-page { padding-bottom: 80px; }
+}
+
+/* ===========================================================
+   운영사 정보 — pd-main 하단
+   =========================================================== */
+.pd-operator-info {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: var(--pd-bg);
+  border: 1px solid var(--pd-border-soft);
+  border-radius: 12px;
+}
+.pd-operator-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--pd-text-3);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.pd-operator-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 24px;
+}
+@media (max-width: 720px) {
+  .pd-operator-info { padding: 16px 18px; }
+  .pd-operator-grid { grid-template-columns: 1fr; gap: 14px; }
+}
+.pd-operator-cell {
+  display: flex; align-items: center; gap: 12px;
+  min-width: 0;
+}
+.pd-operator-icon {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  background: var(--pd-surface);
+  border: 1px solid var(--pd-border-soft);
+  border-radius: 50%;
+  color: var(--pd-primary);
+}
+.pd-operator-icon svg { width: 16px; height: 16px; }
+.pd-operator-body {
+  display: flex; flex-direction: column; gap: 2px;
+  min-width: 0;
+}
+.pd-operator-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pd-text-3);
+}
+.pd-operator-value {
+  font-size: 14px;
+  color: var(--pd-text-1);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ===========================================================
+   이미지 라이트박스 (여행 일정 이미지 클릭 시)
+   =========================================================== */
+.pd-lightbox {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, .92);
+  z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 16px;
+  animation: pdLightboxFade .15s ease;
+}
+.pd-lightbox[hidden] { display: none; }
+@keyframes pdLightboxFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.pd-lightbox-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, .4);
+}
+.pd-lightbox-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.pd-lightbox-close:hover { background: rgba(255, 255, 255, .25); }

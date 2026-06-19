@@ -1,0 +1,331 @@
+/* booking-panel.css — 공통 예약 패널 (.bk-*)
+ * route-detail.html / product-detail.html 두 페이지에서 동일하게 사용.
+ * 데스크탑(≥1024px): 우측 sticky 패널 / 모바일·태블릿(≤1023px): 하단 시트 + mobile-bar.
+ * 토큰: search-results.css 의 --sr-* 를 직접 참조 (양쪽 페이지 모두 로드함).
+ */
+
+/* ===========================================================
+   우측 sticky 예약 패널 (.bk-booking)
+   =========================================================== */
+.bk-booking { display: block; }
+
+@media (min-width: 1024px) {
+  .bk-booking {
+    position: sticky;
+    top: 80px;
+    align-self: start;   /* grid 부모가 stretch 일 때 sticky 가 작동하도록 */
+  }
+}
+
+/* 카드 컨테이너 */
+.bk-booking-card {
+  background: var(--sr-surface);
+  border: 1px solid var(--sr-border);
+  border-radius: 14px;
+  padding: 0 18px 18px;
+  display: flex; flex-direction: column;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* sticky 헤더 — 라벨 + (모바일 닫기 버튼) */
+.bk-booking-head {
+  position: sticky;
+  top: 0;
+  background: var(--sr-surface);
+  z-index: 5;
+  margin: 0 -18px;
+  padding: 18px 18px 12px;
+  border-bottom: 1px solid var(--sr-border-soft);
+}
+.bk-booking-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 17px; font-weight: 800;
+  color: var(--sr-text-1);
+  letter-spacing: -.02em;
+}
+.bk-booking-label::before {
+  content: '';
+  width: 4px; height: 16px;
+  background: var(--sr-primary);
+  border-radius: 2px;
+}
+
+/* 블록 (출발일/인원 선택 등) */
+.bk-block { padding: 16px 0; border-bottom: 1px solid var(--sr-border-soft); }
+.bk-block:last-of-type { border-bottom: none; }
+.bk-block-label {
+  font-size: 12.5px; font-weight: 700;
+  color: var(--sr-text-1);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.bk-req { font-size: 10px; font-weight: 700; color: var(--sr-error); }
+
+/* ===========================================================
+   캘린더
+   =========================================================== */
+.bk-cal-month {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.bk-cal-month-title {
+  font-size: 13.5px; font-weight: 700;
+  color: var(--sr-text-1);
+}
+.bk-cal-nav {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  border-radius: 6px;
+  color: var(--sr-text-2);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+.bk-cal-nav:hover { background: var(--sr-bg); color: var(--sr-text-1); }
+.bk-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.bk-cal-dow {
+  text-align: center;
+  padding: 4px 0 6px;
+  font-size: 10.5px; font-weight: 700;
+  color: var(--sr-text-3);
+  font-family: ui-monospace, monospace;
+}
+.bk-cal-cell {
+  aspect-ratio: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 1px;
+  padding: 2px 0;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--sr-text-1);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.bk-cal-cell-num {
+  font-size: 13px; font-weight: 600;
+  line-height: 1.1;
+}
+.bk-cal-cell-seats {
+  font-size: 9.5px; font-weight: 600;
+  line-height: 1.1;
+  color: var(--sr-text-3);
+  letter-spacing: -.02em;
+}
+.bk-cal-cell.empty { visibility: hidden; }
+.bk-cal-cell.past { color: var(--sr-text-4); cursor: not-allowed; }
+.bk-cal-cell.full { cursor: not-allowed; color: var(--sr-text-4); }
+/* 마감 — 잔여 텍스트는 error red */
+.bk-cal-cell.full .bk-cal-cell-seats { color: var(--sr-error); font-weight: 700; }
+/* 미운영 — 회색 + 비활성화 */
+.bk-cal-cell.off { cursor: not-allowed; color: var(--sr-text-4); }
+.bk-cal-cell.off .bk-cal-cell-num { color: var(--sr-text-4); }
+.bk-cal-cell.off .bk-cal-cell-seats { color: var(--sr-text-4); font-weight: 600; }
+.bk-cal-cell.avail .bk-cal-cell-seats { color: var(--sr-success); }
+/* 출발 확정 (booked >= minPax) — 잔여 텍스트 primary 색 */
+.bk-cal-cell.confirmed .bk-cal-cell-seats { color: var(--sr-primary); font-weight: 700; }
+.bk-cal-cell.avail:hover { background: var(--sr-primary-soft); }
+.bk-cal-cell.avail:hover .bk-cal-cell-num { color: var(--sr-primary-strong); }
+.bk-cal-cell.selected,
+.bk-cal-cell.selected:hover { background: var(--sr-primary); }
+.bk-cal-cell.selected .bk-cal-cell-num { color: #fff; font-weight: 700; }
+.bk-cal-cell.selected .bk-cal-cell-seats { color: rgba(255, 255, 255, .9); }
+
+/* ===========================================================
+   요금 정보 테이블 (read-only — 인원은 checkout 에서 선택)
+   =========================================================== */
+.bk-fare-table {
+  display: flex; flex-direction: column;
+  background: var(--sr-bg);
+  overflow: hidden;
+}
+.bk-fare-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  background: var(--sr-surface);
+}
+.bk-fare-row + .bk-fare-row { border-top: 1px dashed var(--sr-border-soft); }
+.bk-fare-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sr-text-2);
+}
+.bk-fare-price {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--sr-text-1);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+
+/* ===========================================================
+   인원 선택 (qty stepper)
+   =========================================================== */
+.bk-qty-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+}
+.bk-qty-row + .bk-qty-row { border-top: 1px dashed var(--sr-border-soft); }
+.bk-qty-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bk-qty-name { font-size: 13.5px; font-weight: 600; color: var(--sr-text-1); }
+.bk-qty-price { font-size: 11.5px; color: var(--sr-text-3); font-variant-numeric: tabular-nums; }
+.bk-qty-stepper {
+  display: flex; align-items: center; gap: 6px;
+  flex-shrink: 0;
+}
+.bk-qty-btn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--sr-border);
+  background: var(--sr-surface);
+  color: var(--sr-text-1);
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: background .12s, border-color .12s;
+}
+.bk-qty-btn:hover:not(:disabled) {
+  background: var(--sr-primary-soft);
+  border-color: var(--sr-primary);
+  color: var(--sr-primary);
+}
+.bk-qty-btn:disabled { opacity: .4; cursor: not-allowed; }
+.bk-qty-count {
+  min-width: 24px;
+  text-align: center;
+  font-size: 14px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===========================================================
+   총합계 + 예약하기 버튼
+   =========================================================== */
+.bk-summary { padding: 14px 0; }
+.bk-summary-row {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; color: var(--sr-text-2);
+}
+.bk-summary-row.total { font-size: 14px; color: var(--sr-text-1); }
+.bk-summary-row.total strong {
+  font-size: 18px; font-weight: 800;
+  color: var(--sr-text-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.bk-book-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--sr-primary);
+  color: #fff;
+  border: none;
+  font-size: 15px; font-weight: 500;
+  cursor: pointer;
+  transition: background .12s;
+}
+.bk-book-btn:hover:not(:disabled) { background: var(--sr-primary-strong); }
+.bk-book-btn:disabled {
+  background: var(--sr-border);
+  color: var(--sr-text-3);
+  cursor: not-allowed;
+}
+
+/* ===========================================================
+   모바일/태블릿 (≤1023px) — 바텀시트 + 하단 mobile-bar
+   =========================================================== */
+.bk-sheet-handle, .bk-sheet-close { display: none; }
+
+.bk-mobile-bar {
+  display: none;
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 40;
+}
+.bk-mobile-bar-btn {
+  display: block;
+  width: 100%;
+  background: var(--sr-primary);
+  color: #fff;
+  border: none;
+  padding: 20px 16px;
+  font-size: 15px; font-weight: 800;
+  cursor: pointer;
+  transition: background .12s;
+}
+.bk-mobile-bar-btn:hover { background: var(--sr-primary-strong); }
+
+.bk-sheet-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, .55);
+  z-index: 100;
+  display: none;
+  animation: bkFadeIn .15s;
+}
+.bk-sheet-backdrop.open { display: block; }
+@keyframes bkFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 1023px) {
+  /* 예약 패널을 바텀시트로 전환 */
+  .bk-booking {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--sr-surface);
+    border-radius: 18px 18px 0 0;
+    max-height: 88vh;
+    z-index: 110;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, .18);
+    transform: translateY(100%);
+    transition: transform .25s cubic-bezier(.2, .8, .2, 1);
+  }
+  .bk-booking.open { transform: translateY(0); }
+  /* 시트 내부 카드 — 시트 컨테이너로서 보더/섀도우 제거 */
+  .bk-booking-card {
+    border: none;
+    border-radius: 0;
+    max-height: none;
+    padding: 0 18px 18px;
+  }
+  /* 시트 핸들 + 닫기 버튼 */
+  .bk-sheet-handle {
+    display: block;
+    width: 36px; height: 4px;
+    background: var(--sr-border);
+    border-radius: 2px;
+    margin: 8px auto 6px;
+    flex-shrink: 0;
+  }
+  .bk-sheet-close {
+    display: grid; place-items: center;
+    width: 32px; height: 32px;
+    font-size: 22px; line-height: 1;
+    color: var(--sr-text-3);
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .bk-sheet-close:hover { background: var(--sr-bg); color: var(--sr-text-1); }
+  /* 모바일에선 head 를 flex row 로 (라벨 + 닫기) */
+  .bk-booking-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px;
+  }
+  /* 모바일 하단 액션바 노출 */
+  .bk-mobile-bar { display: block; }
+}

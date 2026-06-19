@@ -1,0 +1,36 @@
+/* tokens.css — design tokens extracted from tms2-builder.html */
+
+:root {
+  --bg-base: #F6F7F4;
+  --bg-canvas: #ECEDE8;
+  --surface: #FFFFFF;
+  --surface-2: #FAFAF8;
+  --surface-3: #F2F3EF;
+  --border: #E4E5DF;
+  --border-strong: #D2D3CC;
+  --border-soft: #EDEEE9;
+  --text-1: #15181A;
+  --text-2: #4D5358;
+  --text-3: #828A90;
+  --text-4: #B0B6BB;
+  --brand: #0E5F4A;
+  --brand-bg: #E6F1ED;
+  --brand-soft: #D4E8E0;
+  --brand-strong: #094A39;
+  --status-draft: #B45309;
+  --status-draft-bg: #FEF3C7;
+  --status-live: #166534;
+  --status-live-bg: #DCFCE7;
+  --status-info: #1D4ED8;
+  --status-info-bg: #DBEAFE;
+  --status-error: #B91C1C;
+  --status-error-bg: #FEE2E2;
+  --panel-l: 280px;
+  --panel-r: 340px;
+  --topbar-h: 112px;     /* tms2-builder 2-row topbar — 각 row 약 56px */
+  --shadow-1: 0 1px 2px rgba(20,24,26,.04);
+  --shadow-2: 0 4px 12px rgba(20,24,26,.06);
+  --shadow-3: 0 12px 32px rgba(20,24,26,.10);
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}

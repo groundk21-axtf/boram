@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>상품 주문</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/preview.css">
+<link rel="stylesheet" href="css/modals.css">
+<link rel="stylesheet" href="css/builder.css">
+<link rel="stylesheet" href="css/search-results.css">
+<link rel="stylesheet" href="css/booking-panel.css">
+<link rel="stylesheet" href="css/checkout.css">
+<style>
+  body { --t-primary: #2563EB; --t-primary-strong: #1D4ED8; --t-text: #1A1A1A; --t-text-2: #555; --t-bg: #FAFAFA; --t-surface: #FFFFFF; --t-radius: 6px;
+         --topbar-h: 0px; --panel-l: 0px; --panel-r: 0px; }
+  .ps-mnav-backdrop[data-sc-injected] { position: fixed !important; inset: 0 !important; }
+  /* 상품 데이터(이용안내·환불규정) HTML 렌더용 리치 텍스트 */
+  .co-rich { font-size: 13px; line-height: 1.7; color: var(--co-text-2, #475569); word-break: break-word; }
+  .co-rich p { margin: 0 0 8px; }
+  .co-rich p:last-child { margin-bottom: 0; }
+  .co-rich b, .co-rich strong { color: var(--co-text-1, #0F172A); font-weight: 700; }
+  .co-rich a { color: var(--co-primary, #2563EB); text-decoration: none; }
+  .co-rich a:hover { text-decoration: underline; }
+  .co-rich blockquote { margin: 8px 0; padding: 8px 12px; border-left: 3px solid var(--co-border, #E5E7EB); color: var(--co-text-2, #475569); }
+  /* 결제수단 — 1열 리스트 (항목 사이 점선 구분선) */
+  .co-pm-list { display: flex; flex-direction: column; gap: 0; }
+  .co-pm-list .co-pm {
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 14px 6px;
+    border-bottom: 1px dashed var(--co-border, #E5E7EB);
+  }
+  .co-pm-list .co-pm:last-child { border-bottom: 0; }
+</style>
+</head>
+<body>
+
+<div id="srSiteHeader" data-active-page=""></div>
+<script src="js/site-chrome.js"></script>
+
+<main class="co-page">
+  <div class="co-content">
+
+    <article class="co-main">
+
+      <!-- 1) 상품 정보 + 옵션 선택 (통합) -->
+      <section class="co-section">
+        <h2 class="co-section-title">상품 정보</h2>
+        <div class="co-card co-product-section">
+          <div class="co-product-info" id="copProductInfo"></div>
+          <div class="co-options-divider"></div>
+          <div class="co-options" id="copOptions"></div>
+          <div class="co-combos" id="copCombos"></div>
+          <div class="co-options-divider"></div>
+          <div class="co-inputs" id="copInputs"></div>
+        </div>
+      </section>
+
+      <!-- 3) 구매자 정보 -->
+      <section class="co-section">
+        <h2 class="co-section-title">예약자 정보</h2>
+        <div class="co-card">
+          <div class="co-field-grid">
+            <div class="co-field">
+              <label for="copLast">성</label>
+              <input id="copLast" type="text" placeholder="성">
+            </div>
+            <div class="co-field">
+              <label for="copFirst">이름</label>
+              <input id="copFirst" type="text" placeholder="이름">
+            </div>
+          </div>
+          <div class="co-field-grid">
+            <div class="co-field">
+              <label for="copPhone">전화번호</label>
+              <div class="co-phone" id="copPhoneWrap">
+                <button type="button" class="co-phone-cc" id="copPhoneCcBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="국가 선택">
+                  <span class="co-phone-cc-flag" id="copPhoneCcFlag">🇰🇷</span>
+                  <span class="co-phone-cc-code" id="copPhoneCcCode">+82</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <input id="copPhone" type="tel" placeholder="전화번호">
+                <ul class="co-phone-cc-menu" id="copPhoneCcMenu" role="listbox" hidden></ul>
+              </div>
+            </div>
+            <div class="co-field">
+              <label for="copEmail">이메일</label>
+              <input id="copEmail" type="email" placeholder="example@email.com">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4) 결제수단 -->
+      <section class="co-section">
+        <h2 class="co-section-title">결제수단</h2>
+        <div class="co-card co-payment-methods" id="copPaymentMethods"></div>
+      </section>
+
+      <!-- 5) 이용안내 및 유의사항 — 상품 데이터(bookingNoticeKo)로 렌더 -->
+      <section class="co-section" id="copNoticeSection">
+        <h2 class="co-section-title">이용안내 및 유의사항</h2>
+        <div class="co-card co-notice co-rich" id="copNotice"></div>
+      </section>
+
+      <!-- 6) 취소 및 환불규정 — 상품 데이터(refundPolicyKo)로 렌더 -->
+      <section class="co-section" id="copRefundSection">
+        <h2 class="co-section-title">취소 및 환불규정</h2>
+        <div class="co-card co-notice co-rich" id="copRefund"></div>
+      </section>
+
+    </article>
+
+    <!-- 우측 사이드바: 주문 정보 -->
+    <aside class="co-sidebar" id="copSidebar">
+      <div class="co-sheet-handle" aria-hidden="true"></div>
+      <div class="co-summary-card">
+        <header class="co-summary-head">
+          <span class="co-summary-head-title">주문 정보</span>
+          <button class="co-sheet-close" id="copSheetClose" type="button" aria-label="닫기">×</button>
+        </header>
+        <div class="co-summary-product" id="copSummaryProduct"></div>
+        <div class="co-summary-totals">
+          <div class="co-sum-line total">
+            <span>총 결제금액</span>
+            <strong id="copTotal">₩ 0</strong>
+          </div>
+          <div class="co-sum-line pm">
+            <span>결제수단</span>
+            <strong id="copPmLabel">신용/체크카드</strong>
+          </div>
+        </div>
+      </div>
+      <button class="co-pay-btn" id="copPayBtn" type="button">결제하기</button>
+    </aside>
+
+  </div>
+</main>
+
+<!-- 모바일 하단 고정 [결제하기] 버튼 + 시트 백드롭 -->
+<div class="co-mobile-bar" id="copMobileBar">
+  <button class="co-mobile-bar-btn" id="copMobilePayBtn" type="button">결제하기</button>
+</div>
+<div class="co-sheet-backdrop" id="copSheetBackdrop"></div>
+
+<div id="srSiteFooter"></div>
+
+<script src="data/product-detail.js"></script>
+<script src="js/checkout-product.js"></script>
+
+</body>
+</html>

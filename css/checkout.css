@@ -1,0 +1,2478 @@
+/* checkout.css — 결제 페이지 (일반/순환/투어 공용) */
+
+:root {
+  --co-primary: var(--sr-primary, #2563EB);
+  --co-primary-strong: var(--sr-primary-strong, #1D4ED8);
+  --co-primary-soft: var(--sr-primary-soft, #DBEAFE);
+  --co-text-1: var(--sr-text-1, #0F172A);
+  --co-text-2: var(--sr-text-2, #475569);
+  --co-text-3: var(--sr-text-3, #94A3B8);
+  --co-border: var(--sr-border, #E5E7EB);
+  --co-border-soft: var(--sr-border-soft, #F1F2F4);
+  --co-bg: var(--sr-bg, #F8FAFC);
+  --co-surface: #FFFFFF;
+  --co-warn: #F59E0B;
+  --co-danger: #DC2626;
+  --co-step-bg: #1E1B4B;
+  --co-sum-bg: #EEF3FA;
+  --co-sum-border: #DBE3EE;
+}
+
+/* ===========================================================
+   레이아웃
+   =========================================================== */
+.co-page {
+  max-width: var(--sr-content-max);
+  margin: 0 auto;
+  padding: 0px 60px 100px;
+}
+.co-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 440px;
+  gap: 28px;
+  align-items: start;
+  margin: 24px;
+}
+@media (max-width: 1024px) {
+  .co-content { margin: 16px 0; gap: 20px; }
+}
+@media (max-width: 880px) {
+  .co-content { grid-template-columns: 1fr; }
+  .co-page { padding-left: 24px; padding-right: 24px; }   /* 모바일/태블릿: 좌우 여백 축소 (데스크톱 60px → 24px) */
+}
+@media (max-width: 480px) {
+  .co-page { padding-left: 16px; padding-right: 16px; }   /* 폰: 좌우 16px */
+}
+.co-main {
+  display: flex; flex-direction: column;
+  gap: 32px;
+  min-width: 0;
+}
+
+/* ===========================================================
+   섹션 — product-detail / route-detail 와 동일한 bar accent 타이틀 패턴
+   =========================================================== */
+.co-section { display: flex; flex-direction: column; gap: 14px; }
+.co-section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 18px; font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.02em;
+  margin: 0;
+}
+.co-section-title::before {
+  content: '';
+  width: 4px; height: 16px;
+  background: var(--co-primary);
+  border-radius: 2px;
+}
+/* step 아이콘 — 이미 .co-section-title 좌측에 ::before bar 가 있으므로 보조용 */
+.co-step {
+  width: 22px; height: 22px;
+  display: inline-grid; place-items: center;
+  background: var(--co-step-bg);
+  color: #fff;
+  font-size: 12px; font-weight: 800;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.co-step.warn   { background: var(--co-warn); }
+.co-step.danger { background: var(--co-danger); }
+.co-step svg { width: 13px; height: 13px; }
+
+/* ===========================================================
+   공용 카드 — bk-booking-card / pd-include-card 톤
+   =========================================================== */
+.co-card {
+  background: var(--co-surface);
+  border: 1px solid var(--co-border-soft);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+/* ===========================================================
+   여정 카드 (인원 선택 영역)
+   =========================================================== */
+.co-cards-stack { display: flex; flex-direction: column; gap: 14px; }
+.co-journey-card {
+  background: var(--co-surface);
+  border: 1px solid var(--co-border-soft);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex; flex-direction: column;
+  gap: 12px;
+}
+.co-journey-head {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13.5px; font-weight: 600; color: var(--co-text-2);
+}
+.co-journey-head svg { width: 16px; height: 16px; color: var(--co-text-3); }
+
+/* 사이드바 summary에서만 사용되는 작은 pin 아이콘 */
+.co-pin {
+  display: inline-grid; place-items: center;
+  width: 14px; height: 14px;
+}
+.co-pin svg { width: 14px; height: 14px; }
+
+/* 출도착지 — [출발 / 정거장명] → [도착 / 정거장명] */
+.co-route-pill {
+  background: var(--co-bg);
+  border: 1px solid var(--co-border-soft);
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex; align-items: center;
+  gap: 12px;
+}
+.co-route-od {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+.co-route-od-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--co-text-3);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.co-route-od-station {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--co-text-1);
+  letter-spacing: -.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.co-route-od-arrow {
+  display: inline-grid; place-items: center;
+  flex-shrink: 0;
+  color: var(--co-primary);
+}
+.co-route-od-arrow svg { width: 18px; height: 18px; }
+@media (max-width: 480px) {
+  .co-route-od-station { font-size: 13px; }
+}
+
+/* 여정 카드 — 노선명 + 날짜 + 운임 행 (.bk-qty-* 사용) */
+.co-journey-route-name {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.02em;
+  line-height: 1.3;
+  margin: 0;
+}
+.co-journey-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--co-primary);
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.co-journey-date-input {
+  font: inherit;
+  font-weight: 700;
+  color: var(--co-primary);
+  font-variant-numeric: tabular-nums;
+  padding: 3px 8px;
+  border: 1px solid var(--co-border, #d1d5db);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+.co-journey-date-input:focus {
+  outline: none;
+  border-color: var(--co-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--co-primary) 25%, transparent);
+}
+.co-journey-time { color: var(--co-text-2, #6b7280); font-weight: 600; }
+.co-fares {
+  display: flex; flex-direction: column;
+  padding: 4px 0;
+}
+
+.co-fare-note {
+  align-self: flex-end;
+  display: inline-flex; align-items: center;
+  font-size: 12px; color: var(--co-text-3);
+  background: var(--co-bg);
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--co-border-soft);
+}
+
+/* ===========================================================
+   추가 상품 (선택 옵션)
+   =========================================================== */
+.co-addons {
+  display: flex; 
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--co-border-soft);
+}
+.co-addons-head {
+  display: flex; align-items: baseline; gap: 8px;
+}
+.co-addons-title {
+  font-size: 13px; font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.01em;
+}
+.co-addons-sub {
+  font-size: 11px; font-weight: 600;
+  color: var(--co-text-3);
+}
+/* 커스텀 dropdown — 추가 상품 선택 (모바일 네이티브 picker 대신 일관된 UI) */
+.co-addon-select-wrap {
+  position: relative;
+}
+.co-addon-select {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  background: var(--co-surface);
+  border: 1px solid var(--co-border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--co-text-1);
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .12s, box-shadow .12s;
+}
+.co-addon-select:hover { border-color: var(--co-primary); }
+.co-addon-select[aria-expanded="true"] {
+  border-color: var(--co-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+}
+.co-addon-select-placeholder {
+  flex: 1; min-width: 0;
+  color: var(--co-text-3);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.co-addon-select-caret {
+  width: 14px; height: 14px;
+  flex-shrink: 0;
+  color: var(--co-text-3);
+  transition: transform .15s;
+}
+.co-addon-select[aria-expanded="true"] .co-addon-select-caret {
+  transform: rotate(180deg);
+}
+
+/* 옵션 메뉴 — 트리거 바로 아래 popover */
+.co-addon-select-menu {
+  position: absolute;
+  top: calc(100% + 4px); left: 0; right: 0;
+  z-index: 20;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--co-surface);
+  border: 1px solid var(--co-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, .12);
+  max-height: 260px;
+  overflow-y: auto;
+  animation: coAddonMenuOpen .15s ease;
+}
+.co-addon-select-menu[hidden] { display: none; }
+@keyframes coAddonMenuOpen {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.co-addon-select-option {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--co-text-1);
+  cursor: pointer;
+  transition: background .12s;
+}
+.co-addon-select-option:hover {
+  background: var(--co-primary-soft);
+  color: var(--co-primary-strong);
+}
+.co-addon-select-option-name {
+  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.co-addon-select-option-price {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+  color: var(--co-text-1);
+  white-space: nowrap;
+}
+.co-addon-select-empty {
+  padding: 12px 14px;
+  background: var(--co-surface);
+  border: 1px dashed var(--co-border);
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: var(--co-text-3);
+  text-align: center;
+}
+
+/* 선택된 추가 상품 목록 */
+.co-addon-selected-list {
+  display: flex; flex-direction: column;
+  gap: 6px;
+  margin: 0; padding: 0;
+  list-style: none;
+}
+.co-addon-selected-item {
+  display: flex; flex-direction: column;
+  padding: 10px 12px;
+  background: var(--co-bg);
+  border: 1px solid var(--co-border-soft);
+  border-radius: 8px;
+}
+/* 상단 행 — 정보 + 수량 + × 삭제 */
+.co-addon-selected-main {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+}
+.co-addon-selected-divider {
+  margin: 8px 0;
+  border-top: 1px dashed var(--co-border);
+}
+/* 좌측 정보 — 이름 위 / 가격 아래 */
+.co-addon-selected-info {
+  display: flex; flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.co-addon-selected-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--co-text-1);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.co-addon-selected-price {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--co-primary-strong);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+/* selected 안의 stepper — 약간 더 작게 */
+.co-addon-selected-item .bk-qty-btn { width: 24px; height: 24px; font-size: 13px; }
+.co-addon-selected-item .bk-qty-count { min-width: 20px; font-size: 13px; }
+
+/* 날짜 지정 — dropdown 옵션 배지 */
+.co-addon-date-badge {
+  display: inline-flex; align-items: center;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--co-primary-soft);
+  color: var(--co-primary-strong);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: -.01em;
+}
+
+/* 선택된 인스턴스 — 사용일 라벨 + datepicker 버튼 (좌우 정렬) */
+.co-addon-date-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.co-addon-date-label {
+  font-size: 12px; font-weight: 700;
+  color: var(--co-text-1);
+  flex-shrink: 0;
+}
+/* 커스텀 datepicker — 트리거 + 캘린더 popover */
+.co-datepicker-wrap {
+  position: relative;
+}
+/* 트리거를 일반 버튼 형태로 */
+.co-datepicker-trigger {
+  height: 28px;
+  padding: 0 12px;
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--co-danger);
+  border-radius: 6px;
+  background: var(--co-surface);
+  color: var(--co-danger);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .12s, color .12s, box-shadow .12s;
+}
+.co-datepicker-trigger:hover {
+  background: var(--co-primary-soft);
+}
+.co-datepicker-trigger[aria-expanded="true"] {
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, .15);
+}
+/* 날짜 선택된 상태 — 채움 버튼 */
+.co-datepicker-trigger.filled {
+  background: var(--co-primary);
+  border-color: var(--co-primary);
+  color: #fff;
+}
+.co-datepicker-trigger.filled:hover {
+  background: var(--co-primary-strong);
+  border-color: var(--co-primary-strong);
+}
+.co-datepicker-caret {
+  width: 13px; height: 13px;
+  flex-shrink: 0;
+}
+
+/* Popover */
+.co-datepicker-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 280px;
+  max-width: 90vw;
+  z-index: 30;
+  padding: 12px;
+  background: var(--co-surface);
+  border: 1px solid var(--co-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, .12);
+  animation: coDpOpen .15s ease;
+}
+.co-datepicker-popover[hidden] { display: none; }
+@keyframes coDpOpen {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 캘린더 헤더 */
+.co-dp-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.co-dp-month-title {
+  font-size: 13px; font-weight: 800;
+  color: var(--co-text-1);
+  font-variant-numeric: tabular-nums;
+}
+.co-dp-nav {
+  width: 24px; height: 24px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--co-text-2);
+  font-size: 16px;
+  cursor: pointer;
+}
+.co-dp-nav:hover { background: var(--co-bg); color: var(--co-text-1); }
+
+/* 캘린더 그리드 */
+.co-dp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.co-dp-dow {
+  text-align: center;
+  padding: 4px 0 6px;
+  font-size: 10.5px; font-weight: 700;
+  color: var(--co-text-3);
+  font-family: ui-monospace, monospace;
+}
+.co-dp-dow.sun { color: var(--co-danger); }
+.co-dp-cell {
+  aspect-ratio: 1;
+  display: grid; place-items: center;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--co-text-1);
+  font-size: 12px; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.co-dp-cell.co-dp-empty { visibility: hidden; }
+.co-dp-cell.past {
+  color: var(--co-text-4, #CBD5E1);
+  cursor: not-allowed;
+}
+.co-dp-cell.sun:not(.past):not(.selected) { color: var(--co-danger); }
+.co-dp-cell:hover:not(:disabled):not(.selected) {
+  background: var(--co-primary-soft);
+  color: var(--co-primary-strong);
+}
+.co-dp-cell.selected,
+.co-dp-cell.selected:hover {
+  background: var(--co-primary);
+  color: #fff;
+  font-weight: 800;
+}
+
+/* 사이드바 — addon 옆 날짜 표기 */
+.co-sum-addon-date {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--brand);
+  color: var(--surface);
+  font-size: 10px; font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.co-addon-remove {
+  width: 24px; height: 24px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--co-text-2);
+  font-size: 18px; line-height: 1;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.co-addon-remove:hover {
+  background: var(--co-surface);
+  color: var(--co-danger);
+}
+
+/* ===========================================================
+   탑승자 정보
+   =========================================================== */
+.co-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+@media (max-width: 480px) {
+  .co-field-grid { grid-template-columns: 1fr; }
+}
+.co-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.co-field label { font-size: 12px; font-weight: 600; color: var(--co-text-2); }
+.co-field input[type="text"],
+.co-field input[type="tel"],
+.co-field input[type="email"] {
+  width: 100%;
+  min-width: 0;       /* 좁은 폭에서 input 고유 너비로 인한 오버플로우 방지 */
+  box-sizing: border-box;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--co-border);
+  border-radius: 8px;
+  font-size: 13.5px;
+  background: #fff;
+  color: var(--co-text-1);
+  font-family: inherit;
+}
+.co-field input::placeholder { color: var(--co-text-3); }
+.co-field input:focus {
+  outline: none;
+  border-color: var(--co-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+}
+
+.co-phone {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr);
+  gap: 8px;
+  position: relative;
+  min-width: 0;
+}
+.co-phone-cc {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--co-border);
+  border-radius: 8px;
+  font-size: 13px;
+  background: #fff;
+  color: var(--co-text-1);
+  cursor: pointer;
+  transition: border-color .12s, box-shadow .12s;
+}
+.co-phone-cc:hover { border-color: var(--co-primary); }
+.co-phone-cc[aria-expanded="true"] { border-color: var(--co-primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, .12); }
+.co-phone-cc svg { width: 12px; height: 12px; color: var(--co-text-3); }
+.co-phone-cc-flag { font-size: 15px; line-height: 1; }
+.co-phone-cc-code { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.co-phone-cc-menu {
+  position: absolute;
+  top: calc(100% + 4px); left: 0;
+  margin: 0; padding: 4px;
+  min-width: 220px;
+  max-height: 280px;
+  overflow-y: auto;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--co-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, .12);
+  z-index: 50;
+}
+.co-phone-cc-item {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--co-text-1);
+  cursor: pointer;
+}
+.co-phone-cc-item:hover { background: var(--co-bg); }
+.co-phone-cc-item.active { color: var(--co-primary); background: var(--co-primary-soft); }
+.co-phone-cc-item .co-phone-cc-flag { font-size: 16px; }
+.co-phone-cc-item .co-phone-cc-name { font-weight: 600; }
+.co-phone-cc-item .co-phone-cc-code { color: var(--co-text-2); font-weight: 600; font-size: 12.5px; }
+
+/* ===========================================================
+   결제수단
+   =========================================================== */
+.co-payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+}
+/* 일반결제/간편결제 그룹 (TMS-A-132) */
+.co-pm-group-title {
+  font-size: 12px; font-weight: 700; color: var(--co-text-2);
+  margin-bottom: 8px;
+}
+.co-pm-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+@media (min-width: 1024px) {
+  .co-pm-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.co-radio {
+  display: inline-flex; align-items: center; gap: 10px;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--co-text-1);
+  padding: 4px 0;
+}
+.co-radio input { display: none; }
+.co-radio-dot {
+  width: 18px; height: 18px;
+  border: 2px solid var(--co-border);
+  border-radius: 50%;
+  position: relative;
+  transition: border-color .12s;
+  flex-shrink: 0;
+}
+.co-radio input:checked + .co-radio-dot { border-color: var(--co-primary); }
+.co-radio input:checked + .co-radio-dot::after {
+  content: '';
+  position: absolute; inset: 3px;
+  border-radius: 50%;
+  background: var(--co-primary);
+}
+.co-radio-label { font-weight: 600; }
+
+/* 결제수단 항목 — 라디오 + 브랜드 칩 + 라벨 */
+.co-pm {
+  padding: 8px 0;
+  gap: 8px;
+  background: #fff;
+  transition: border-color .12s, background .12s;
+}
+.co-pm:hover { border-color: var(--co-text-3); }
+
+.co-pm .co-radio-label { font-size: 13px; font-weight: 600; }
+
+/* 결제수단별 입력 화면 (카드/계좌 폼 · 간편결제 안내) */
+.co-pm-detail {
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid var(--co-border);
+  border-radius: 10px;
+  background: var(--co-bg-soft, #f8fafc);
+}
+.co-pm-detail:empty { display: none; }
+.co-pm-detail .co-field input,
+.co-pm-detail .co-field select {
+  padding: 9px 11px;
+  border: 1px solid var(--co-border);
+  border-radius: 8px;
+  font-size: 13px;
+  background: #fff;
+}
+.co-pm-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--co-text-3);
+}
+.co-pm-redirect {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.co-pm-redirect-badge {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--co-primary-soft);
+  color: var(--co-primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+.co-pm-redirect p { margin: 0; font-size: 13px; color: var(--co-text-2); }
+
+/* ===========================================================
+   안내/환불 노티스
+   =========================================================== */
+.co-notice {
+  background: var(--co-surface);
+}
+.co-notice ul {
+  margin: 0; padding: 0;
+  list-style: none;
+  display: flex; flex-direction: column;
+  gap: 8px;
+}
+.co-notice li {
+  font-size: 13px; line-height: 1.65; color: var(--co-text-2);
+  padding-left: 10px;
+  position: relative;
+}
+.co-notice li::before {
+  content: '·';
+  position: absolute; left: 0; top: 0;
+  font-weight: 800; color: var(--co-text-3);
+}
+.co-notice li b { color: var(--co-text-1); font-weight: 700; }
+.co-notice li.danger { color: var(--co-danger); }
+.co-notice li.danger b { color: var(--co-danger); font-weight: 800; }
+.co-notice li a {
+  color: var(--co-primary);
+  text-decoration: none;
+  font-weight: 700;
+  font-family: inherit;
+}
+.co-notice li a:hover { text-decoration: underline; }
+
+/* ===========================================================
+   우측 사이드바 — 나의 예약
+   =========================================================== */
+.co-sidebar {
+  display: flex; flex-direction: column;
+  gap: 12px;
+  position: sticky;
+  top: 90px;
+}
+
+/* 사이드바 요약 카드 — bk-booking-card (14px radius + border) 톤 */
+.co-summary-card {
+  background: var(--co-surface);
+  border: 1px solid var(--co-border);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex; flex-direction: column;
+  gap: 14px;
+}
+.co-summary-head {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 17px; font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.02em;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--co-border-soft);
+}
+.co-summary-head::before {
+  content: '';
+  width: 4px; height: 16px;
+  background: var(--co-primary);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.co-summary-head svg { width: 18px; height: 18px; color: var(--co-primary); }
+
+.co-summary-journeys { display: flex; flex-direction: column; gap: 14px; }
+.co-sum-journey {
+  display: flex; flex-direction: column;
+  gap: 8px;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--co-border);
+}
+/* 다음 형제가 .co-sum-journey 가 아닌 경우 (마지막 journey) → divider 숨김
+   :last-of-type 은 tag 기반이라 .co-summary-totals 가 div 면 매칭 안 됨 → :has 로 정확히 타겟 */
+.co-sum-journey:not(:has(+ .co-sum-journey)) {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.co-sum-head { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+  padding-bottom: 10px;
+}
+.co-journey-chip {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px;
+  background: var(--co-primary-soft);
+  border-radius: 999px;
+  font-size: 11px; font-weight: 700;
+  color: var(--co-primary-strong);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.co-sum-date {
+  font-size: 13.5px; font-weight: 700; color: var(--co-primary);
+  font-variant-numeric: tabular-nums;
+}
+.co-sum-route-name {
+  font-size: 13px; font-weight: 700; color: var(--co-text-1);
+}
+
+/* 사이드바 — 출/도착 정류장 + 정류장 정보 버튼 */
+.co-sum-stops {
+  display: flex; flex-direction: column;
+  gap: 16px;
+  margin: 4px 0 10px;
+  padding: 14px;
+  background: var(--co-bg);
+  border-radius: 8px;
+}
+.co-sum-stop-row {
+  display: flex; align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+}
+.co-sum-stop-label {
+  font-size: 11px; font-weight: 700;
+  color: var(--co-text-3);
+  letter-spacing: .04em;
+  flex-shrink: 0;
+  min-width: 30px;
+}
+.co-sum-stop-name {
+  flex: 1; min-width: 0;
+  color: var(--co-text-1); font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.co-sum-stops .route-stop-loc { margin-top: 0; }
+
+.co-sum-spec { display: flex; flex-direction: column; gap: 10px; }
+.co-sum-spec > div {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12.5px;
+  gap: 8px;
+}
+.co-sum-spec > div span {
+  color: var(--co-text-2);
+  flex: 1; min-width: 0;
+  line-height: 1.4;
+}
+.co-sum-spec > div strong {
+  color: var(--co-text-1); font-weight: 700;
+  text-align: right;
+  flex-shrink: 0;
+  min-width: 96px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* 추가 상품 정보 — 요약 카드 내 별도 영역 */
+.co-sum-addons {
+  margin-top: 10px;
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.co-sum-addons-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--co-text-2);
+  letter-spacing: -.01em;
+  margin-bottom: 2px;
+}
+.co-sum-addon-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12.5px;
+  gap: 8px;
+}
+.co-sum-addon-name {
+  color: var(--co-text-2);
+  flex: 1; min-width: 0;
+  line-height: 1.4;
+}
+.co-sum-addon-row strong {
+  color: var(--co-text-1);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  flex-shrink: 0;
+  min-width: 96px;
+  white-space: nowrap;
+}
+/* 예약 정보(메모 등) — 라벨 위, 자유 텍스트 값은 아래로 줄바꿈 (영역 벗어남 방지) */
+.co-sum-addon-row.info {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+.co-sum-addon-row.info .co-sum-addon-name { flex: none; }
+.co-sum-addon-row.info strong {
+  flex: none;
+  min-width: 0;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.co-summary-totals {
+  border-top: 1px solid var(--co-border-soft);
+  padding-top: 14px;
+  display: flex; flex-direction: column;
+  gap: 6px;
+}
+.co-sum-line {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px;
+}
+.co-sum-line span { color: var(--co-text-2); }
+.co-sum-line strong { font-size: 14px; font-weight: 700; color: var(--co-text-1); font-variant-numeric: tabular-nums; }
+.co-sum-line.total span { font-weight: 700; color: var(--co-text-1); font-size: 14px; }
+.co-sum-line.total strong { font-size: 18px; font-weight: 800; color: var(--co-text-1); }
+/* 결제수단 표시 — 총 결제금액 바로 아래 */
+.co-sum-line.pm {
+  margin-top: 2px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--co-border-soft);
+}
+.co-sum-line.pm span { font-size: 12px; }
+.co-sum-line.pm strong { font-size: 13px; font-weight: 700; color: var(--co-text-1); }
+.co-sum-note {
+  font-size: 11px; color: var(--co-text-3);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+/* 결제하기 버튼 — bk-book-btn 톤 */
+.co-pay-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--co-primary);
+  color: #fff;
+  font-size: 15px; font-weight: 800;
+  border: none;
+  border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .12s;
+  cursor: pointer;
+}
+.co-pay-btn:hover:not(:disabled) { background: var(--co-primary-strong); }
+.co-pay-btn:disabled { background: var(--co-border); color: var(--co-text-3); cursor: not-allowed; }
+.co-pay-btn svg { width: 14px; height: 14px; }
+
+/* ===========================================================
+   좌석 선택 — 지정석 상품용 .co-fare-note 확장 + 모달
+   =========================================================== */
+.co-seat-pick {
+  align-self: stretch;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--co-primary-soft, #DBEAFE);
+  border: 1px dashed var(--co-primary, #2563EB);
+  color: var(--co-text-1);
+  font-size: 13px;
+}
+.co-seat-pick-label {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--co-primary, #2563EB);
+}
+.co-seat-summary {
+  flex: 1; min-width: 0;
+  font-weight: 700;
+  color: var(--co-text-1);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+.co-seat-summary-empty { color: var(--co-text-3); font-weight: 500; }
+.co-seat-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--co-primary, #2563EB);
+  background: #fff;
+  color: var(--co-primary, #2563EB);
+  border-radius: 8px;
+  font-size: 12.5px; font-weight: 700;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.co-seat-btn:hover:not(:disabled) {
+  background: var(--co-primary, #2563EB);
+  color: #fff;
+}
+.co-seat-btn.ready {
+  background: var(--co-success, #16A34A);
+  border-color: var(--co-success, #16A34A);
+  color: #fff;
+}
+.co-seat-btn.ready:hover { background: #15803D; border-color: #15803D; }
+.co-seat-btn:disabled { opacity: .4; cursor: not-allowed; }
+.co-seat-btn svg { width: 14px; height: 14px; }
+
+/* ===========================================================
+   좌석 선택 모달
+   =========================================================== */
+.co-seat-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, .55);
+  z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px 16px;
+  animation: coSeatFade .15s;
+}
+.co-seat-modal-backdrop[hidden] { display: none; }
+@keyframes coSeatFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.co-seat-modal-dialog {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 480px;
+  width: 100%;
+  max-height: calc(100vh - 48px);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+  animation: coSeatPop .2s cubic-bezier(.2, .8, .2, 1);
+}
+@keyframes coSeatPop {
+  from { transform: scale(.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.co-seat-modal-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--co-border-soft, #F1F2F4);
+}
+.co-seat-modal-title {
+  font-size: 17px; font-weight: 800;
+  color: var(--co-text-1);
+  margin: 0;  
+}
+
+/* 선택한 좌석 수 / 필요한 좌석 수 카운트 — picked / sep / need 폰트 통일 */
+.co-seat-modal-count {
+  display: inline-flex; align-items: baseline; gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--co-bg);
+  border: 1px solid var(--co-border-soft, #F1F2F4);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  color: var(--co-text-1);
+  margin-right: auto;
+}
+/* 자식 요소 — 부모 폰트 스타일 그대로 상속 */
+.co-seat-modal-count-picked,
+.co-seat-modal-count-sep,
+.co-seat-modal-count-need {
+  font: inherit;
+  color: inherit;
+}
+.co-seat-modal-count.ready {
+  background: var(--co-primary-soft, #DBEAFE);
+  border-color: var(--co-primary, #2563EB);
+  color: var(--co-primary, #2563EB);
+}
+.co-seat-modal-close {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--co-text-3);
+  font-size: 22px; line-height: 1;
+  cursor: pointer;
+}
+.co-seat-modal-close:hover { background: var(--co-bg); color: var(--co-text-1); }
+
+/* Legend — cabin 안 상단에 위치 */
+.co-seat-modal-legend {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 6px 12px;
+  width: 100%;
+  padding: 0 0 10px;
+  margin-bottom: 4px;
+  font-size: 11px;
+  color: var(--co-text-2);
+  border-bottom: 1px dashed var(--co-border-soft, #F1F2F4);
+}
+.co-seat-dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 3px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.co-seat-dot.avail  { background: #ECFDF5; border: 1px solid var(--co-border, #A7F3D0); }
+.co-seat-dot.picked { background: var(--co-primary, #2563EB); }
+.co-seat-dot.booked { background: var(--co-text-4, #CBD5E1); }
+
+/* ===========================================================
+   버스 그리드 — TMS Admin seat-map-editor 와 동일한 layout
+   상단 운전석/출입문 chrome (rounded-t-36) + 캐빈 (rounded-b-36)
+   =========================================================== */
+/* 좌석 컨테이너 — 모달 폭에 맞춰 확장, 좌석 행이 많을 때 내부 스크롤 */
+.co-seat-bus {
+  margin: 14px 20px 16px;
+  flex: 1 1 auto;            /* 모달 다이얼로그의 남은 세로 공간 차지 */
+  min-height: 0;             /* 자식 overflow-y 가 동작하도록 */
+  display: flex; flex-direction: column;
+  overflow-y: auto;          /* 내용이 넘치면 cabin 영역 안에서만 스크롤 */
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+/* Cabin — 좌석 그리드 컨테이너 (모달 폭에 맞춰 확대) */
+.co-seat-bus-cabin {
+  width: 100%;
+
+  padding: 16px 12px 20px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+/* 좌석 행 — flex layout (admin과 동일) */
+.co-seat-grid {
+  width: 100%;
+  display: flex; flex-direction: column;
+  align-items: center;       /* row 들을 가운데 정렬 */
+  gap: 14px;
+}
+.co-seat-row {
+  width: max-content;        /* 자식(좌석/통로) 자연 폭만큼 (max-width 적용 시) */
+  max-width: 100%;
+  display: flex; align-items: center; gap: 14px;
+}
+
+/* 공통 slot (좌석) — 고정 큰 정사각형 */
+.co-seat-slot {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+.co-seat-empty { background: transparent; }
+
+/* 좌석 — admin chair 스타일 (등받이 둥근 윗부분 + 양쪽 다리 dot) */
+.co-seat {
+  position: relative;
+  display: grid; place-items: center;
+  border-radius: 12px 12px 4px 4px;     /* rounded-t-xl rounded-b-md */
+  border: 1px solid var(--co-border, #E5E7EB);
+  background: #fff;
+  color: var(--co-text-2);
+  font-size: 10px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+  cursor: pointer;
+  transition: transform .12s, background .12s, border-color .12s, color .12s;
+}
+/* 의자 다리 (좌·우 하단 둥근 점) */
+.co-seat::before,
+.co-seat::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  width: 6px; height: 4px;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: .4;
+}
+.co-seat::before { left: 6px; }
+.co-seat::after { right: 6px; }
+
+.co-seat.avail {
+  background: #ECFDF5;          /* green-50 */
+  border-color: #A7F3D0;         /* green-200 */
+  color: #047857;
+}
+.co-seat.avail:hover {
+  transform: scale(1.1);
+  z-index: 2;
+}
+.co-seat.picked {
+  background: var(--co-primary, #2563EB);
+  border-color: var(--co-primary, #2563EB);
+  color: #fff;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--co-primary, #2563EB);
+  z-index: 2;
+}
+.co-seat.booked {
+  background: #F1F5F9;          /* slate-100 */
+  border-color: #E2E8F0;         /* slate-200 */
+  color: #94A3B8;                /* slate-400 */
+  cursor: not-allowed;
+}
+.co-seat.booked::before,
+.co-seat.booked::after { opacity: .25; }
+.co-seat.disabled {
+  background: var(--co-border-soft, #F1F2F4);
+  border-color: var(--co-border, #E5E7EB);
+  color: var(--co-text-3);
+  cursor: not-allowed;
+}
+.co-seat.exit {
+  background: #FEF2F2;
+  border-color: #FECACA;
+  color: #B91C1C;
+  cursor: default;
+  font-size: 14px;
+}
+
+/* 통로 — 가운데 vertical divider (고정 폭) */
+.co-seat-aisle {
+  display: grid; place-items: center;
+  width: 16px;
+  flex: 0 0 auto;
+  align-self: stretch;   /* 좌석(정사각) 높이와 동일하게 */
+}
+.co-seat-aisle.wide { width: 36px; }
+.co-seat-aisle i {
+  display: block;
+  width: 2px; height: 100%;
+  background: rgba(203, 213, 225, .5);  /* border/50 */
+}
+
+.co-seat-modal-foot {
+  display: flex; gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--co-border-soft, #F1F2F4);
+}
+.co-seat-btn-secondary,
+.co-seat-btn-primary {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .12s, color .12s;
+}
+.co-seat-btn-secondary {
+  background: #fff;
+  border-color: var(--co-border, #E5E7EB);
+  color: var(--co-text-2);
+}
+.co-seat-btn-secondary:hover { background: var(--co-bg); color: var(--co-text-1); }
+.co-seat-btn-primary {
+  background: var(--co-primary, #2563EB);
+  color: #fff;
+}
+.co-seat-btn-primary:hover:not(:disabled) { background: var(--co-primary-strong, #1D4ED8); }
+.co-seat-btn-primary:disabled {
+  background: var(--co-text-4, #CBD5E1);
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .co-seat-modal-dialog { max-width: 100%; border-radius: 16px 16px 0 0; align-self: flex-end; }
+  .co-seat-modal-backdrop { align-items: flex-end; padding: 0; }
+  .co-seat-bus { margin: 12px; }
+  .co-seat-slot { width: 48px; height: 48px; }
+  .co-seat-aisle { width: 12px; }
+  .co-seat-aisle.wide { width: 32px; }
+  .co-seat { font-size: 9px; }
+}
+
+/* ===========================================================
+   모바일 하단 [결제하기] 액션바 + 우측 패널 → 바텀시트
+   =========================================================== */
+.co-summary-head-title { flex: 1; min-width: 0; }
+.co-sheet-handle,
+.co-sheet-close { display: none; }
+
+.co-mobile-bar { display: none; }
+.co-sheet-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, .55);
+  z-index: 100;
+  display: none;
+  animation: coSheetFade .15s;
+}
+.co-sheet-backdrop.open { display: block; }
+@keyframes coSheetFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (max-width: 880px) {
+  /* 사이드바를 바텀시트로 전환 */
+  .co-sidebar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    top: auto;                        /* desktop의 top: 90px 무효화 */
+    background: var(--co-surface);
+    border-radius: 18px 18px 0 0;
+    max-height: 88vh;
+    z-index: 110;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, .18);
+    transform: translateY(100%);
+    transition: transform .25s cubic-bezier(.2, .8, .2, 1);
+    padding: 28px 16px calc(16px + env(safe-area-inset-bottom));  /* 상단 핸들 absolute 공간 확보 */
+    gap: 12px;
+  }
+  .co-sidebar.open { transform: translateY(0); }
+
+  /* 상단 드래그 핸들 — absolute 로 flex 흐름에서 분리 (결제 버튼과 시각 겹침 방지) */
+  .co-sheet-handle {
+    display: block;
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 36px; height: 4px;
+    background: var(--co-border);
+    border-radius: 2px;
+  }
+
+  /* 헤더 우측 × 닫기 */
+  .co-sheet-close {
+    display: grid; place-items: center;
+    width: 32px; height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--co-text-3);
+    font-size: 22px; line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .co-sheet-close:hover { background: var(--co-bg); color: var(--co-text-1); }
+
+  /* summary-card — 시트 안에서 스크롤 가능 */
+  .co-summary-card {
+    flex: 1; min-height: 0;
+    overflow-y: auto;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  /* 하단 고정 액션바 */
+  .co-mobile-bar {
+    display: block;
+    position: fixed; left: 0; right: 0; bottom: 0;
+    background: var(--co-surface);
+    border-top: 1px solid var(--co-border);
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    z-index: 40;
+    box-shadow: 0 -4px 16px rgba(15, 23, 42, .06);
+  }
+  .co-mobile-bar-btn {
+    display: block;
+    width: 100%;
+    background: var(--co-primary);
+    color: #fff;
+    border: none;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 15px; font-weight: 800;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .co-mobile-bar-btn:hover { background: var(--co-primary-strong); }
+
+  /* 페이지 하단 mobile-bar 공간 확보 */
+  .co-page { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+}
+
+/* ===========================================================
+   상품 주문 페이지 (checkout-product.html)
+   =========================================================== */
+
+/* 1) 통합 카드 — 상품 정보 + 옵션 + 수량 */
+.co-product-section {
+  display: flex; flex-direction: column;
+  gap: 0;
+}
+.co-product-card {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+.co-product-thumb {
+  width: 60px;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--co-bg);
+}
+.co-product-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.co-product-meta {
+  display: flex; flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.co-product-name {
+  font-size: 14px; font-weight: 600;
+  color: var(--co-text-1);
+  letter-spacing: -.02em;
+  line-height: 1.3;
+  margin: 0;
+}
+.co-product-date-row {
+  display: flex; align-items: baseline;
+  gap: 8px;
+  font-size: 12.5px;
+}
+.co-product-date-label {
+  font-weight: 700;
+  color: var(--co-text-3);
+}
+.co-product-date-value {
+  font-weight: 700;
+  color: var(--co-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+.co-product-date-input {
+  font: inherit;
+  font-weight: 700;
+  color: var(--co-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+  padding: 4px 8px;
+  border: 1px solid var(--co-border, #d1d5db);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+.co-product-date-input:focus {
+  outline: none;
+  border-color: var(--co-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--co-primary) 25%, transparent);
+}
+@media (max-width: 480px) {
+  .co-product-card { grid-template-columns: 88px 1fr; gap: 12px; }
+  .co-product-thumb { width: 88px; }
+  .co-product-name { font-size: 14.5px; }
+}
+
+/* 2) 옵션 영역 — 선택형 + 입력형 */
+.co-options {
+  display: flex; flex-direction: column;
+  gap: 14px;
+}
+.co-options-divider {
+  border-top: 1px dashed var(--co-border-soft);
+  margin: 14px 0;
+}
+.co-option-row {
+  display: flex; flex-direction: column;
+  gap: 6px;
+}
+.co-option-label {
+  display: flex; align-items: center;
+  gap: 6px;
+  font-size: 12.5px; font-weight: 700;
+  color: var(--co-text-1);
+  letter-spacing: -.01em;
+}
+.co-option-req {
+  font-size: 10px; font-weight: 700;
+  color: var(--co-danger);
+}
+.co-option-count {
+  margin-left: auto;
+  font-size: 11px; font-weight: 600;
+  color: var(--co-text-3);
+  font-variant-numeric: tabular-nums;
+}
+.co-option-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--co-border);
+  border-radius: 8px;
+  font-size: 13.5px;
+  background: var(--co-surface);
+  color: var(--co-text-1);
+  font-family: inherit;
+  transition: border-color .12s, box-shadow .12s;
+}
+.co-option-input::placeholder { color: var(--co-text-3); }
+.co-option-input:focus {
+  outline: none;
+  border-color: var(--co-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+}
+.co-option-help {
+  font-size: 11.5px; font-weight: 500;
+  color: var(--co-text-3);
+}
+.co-option-selected {
+  flex: 1; min-width: 0;
+  color: var(--co-text-1);
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 3) 선택된 조합 리스트 (옵션 dropdown 아래 자동 채워짐) */
+.co-combos {
+  display: flex; flex-direction: column;
+  gap: 8px;
+}
+.co-combos:not(:empty) { margin-top: 12px; }
+
+/* 4) 입력형 옵션 영역 — 상품 카드 맨 하단 */
+.co-inputs {
+  display: flex; flex-direction: column;
+  gap: 14px;
+}
+.co-combo-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--co-bg);
+  border: 1px solid var(--co-border-soft);
+  border-radius: 8px;
+}
+.co-combo-info {
+  display: flex; flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.co-combo-name {
+  font-size: 13px; font-weight: 700;
+  color: var(--co-text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.co-combo-unit-price {
+  font-size: 11.5px; font-weight: 600;
+  color: var(--co-text-3);
+  font-variant-numeric: tabular-nums;
+}
+.co-combo-row .bk-qty-btn { width: 24px; height: 24px; font-size: 13px; }
+.co-combo-row .bk-qty-count { min-width: 20px; font-size: 13px; }
+.co-combo-remove {
+  width: 24px; height: 24px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--co-text-2);
+  font-size: 18px; line-height: 1;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.co-combo-remove:hover {
+  background: var(--co-surface);
+  color: var(--co-danger);
+}
+
+/* 4) 사이드바 — 주문 정보 (checkout.html `.co-sum-journey` 패턴 재사용) */
+.co-summary-product { display: flex; flex-direction: column; }
+.co-sum-empty {
+  padding: 12px;
+  background: var(--co-bg);
+  border-radius: 6px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--co-text-3);
+}
+
+/* ===========================================================
+   예약 완료 페이지 (booking-complete.html) — .bc-*
+   =========================================================== */
+.bc-page {
+  display: flex; flex-direction: column;
+  gap: 24px;
+}
+
+/* 성공 메시지 */
+.bc-success {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  padding: 32px 16px 24px;
+}
+.bc-success-icon {
+  width: 60px; height: 60px;
+  color: var(--co-primary);
+  margin-bottom: 16px;
+  animation: bcSuccessPop .35s cubic-bezier(.4, 1.6, .5, 1) both;
+}
+@keyframes bcSuccessPop {
+  from { opacity: 0; transform: scale(.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.bc-success-icon svg { width: 100%; height: 100%; }
+.bc-success-title {
+  font-size: 22px; font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.02em;
+  margin: 0 0 8px;
+}
+.bc-success-desc {
+  font-size: 13.5px;
+  color: var(--co-text-2);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 공용 카드 */
+.bc-card {
+  background: var(--co-surface);
+  border: 1px solid var(--co-border-soft);
+  border-radius: 14px;
+  padding: 20px;
+}
+.bc-card-title {
+  font-size: 14px; font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.01em;
+  margin-bottom: 14px;
+}
+
+/* 예약 번호 — 1행 좌측 정렬 pill */
+.bc-card-num-wrap {
+  display: flex; flex-direction: row; align-items: center; justify-content: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--co-primary-soft);
+  border-color: var(--co-primary);
+}
+.bc-card-num-wrap .bc-action-btn { margin-left: auto; }
+
+/* 작은 액션 버튼 (바우처 / 티켓) */
+.bc-action-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--co-surface);
+  border: 1px solid var(--co-primary);
+  border-radius: 6px;
+  font-size: 12px; font-weight: 700;
+  color: var(--co-primary);
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background .12s, color .12s;
+}
+.bc-action-btn:hover { background: var(--co-primary); color: #fff; }
+.bc-action-btn svg { width: 13px; height: 13px; }
+/* 비활성 (이용완료/예약취소) — 클릭은 가능(토스트 안내) */
+.bc-action-btn.is-disabled {
+  border-color: var(--co-border, #E5E7EB);
+  color: var(--co-text-3, #94A3B8);
+  background: var(--co-bg, #F8FAFC);
+}
+.bc-action-btn.is-disabled:hover {
+  background: var(--co-bg, #F8FAFC);
+  color: var(--co-text-3, #94A3B8);
+}
+
+/* 여정 head 안의 [티켓] 버튼 — 우측 끝 정렬 */
+.co-sum-head .bc-action-btn { margin-left: auto; }
+.bc-card-label {
+  font-size: 11.5px; font-weight: 700;
+  color: var(--co-primary-strong);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.bc-card-num {
+  font-size: 18px; font-weight: 800;
+  color: var(--co-text-1);
+  font-family: ui-monospace, monospace;
+  letter-spacing: -.01em;
+}
+
+/* 예약 정보 */
+.bc-info {
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.bc-info-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 13px;
+  gap: 12px;
+}
+.bc-info-label {
+  color: var(--co-text-2);
+  flex-shrink: 0;
+}
+.bc-info-value {
+  color: var(--co-text-1); font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.bc-info-divider {
+  border-top: 1px dashed var(--co-border);
+  margin: 4px 0;
+  padding: 0;
+}
+.bc-info-total .bc-info-label { font-weight: 700; color: var(--co-text-1); }
+.bc-info-total .bc-info-value {
+  font-size: 15px;
+  color: var(--co-primary);
+  letter-spacing: -.01em;
+}
+
+/* 안내 카드 */
+.bc-card-notice .bc-card-title { color: var(--co-text-1); }
+.bc-notice-list {
+  margin: 0; padding-left: 18px;
+  font-size: 12.5px; line-height: 1.8;
+  color: var(--co-text-2);
+}
+.bc-notice-list li { margin-bottom: 4px; }
+.bc-notice-list li:last-child { margin-bottom: 0; }
+
+/* 액션 버튼 */
+.bc-actions {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+.bc-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: -.01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.bc-btn.outline {
+  background: var(--co-surface);
+  border: 1px solid var(--co-border);
+  color: var(--co-text-1);
+}
+.bc-btn.outline:hover { border-color: var(--co-primary); color: var(--co-primary); }
+.bc-btn.primary {
+  background: var(--co-primary);
+  border: 1px solid var(--co-primary);
+  color: #fff;
+}
+.bc-btn.primary:hover { background: var(--co-primary-strong); border-color: var(--co-primary-strong); }
+
+@media (max-width: 480px) {
+  .bc-success-icon { width: 64px; height: 64px; }
+  .bc-success-title { font-size: 19px; }
+  .bc-actions { grid-template-columns: 1fr; }
+}
+
+/* ===========================================================
+   QR 셔틀승차권 모달 — booking-complete.html
+   =========================================================== */
+.ticket-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 23, 42, .65);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: tkFade .15s;
+}
+@keyframes tkFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.ticket-modal {
+  background: #0E2545;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .35);
+  animation: tkSlideUp .25s cubic-bezier(.2, .8, .2, 1);
+}
+@keyframes tkSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ticket-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px 14px;
+}
+.ticket-modal-head h3 {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 16px; font-weight: 800;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -.01em;
+}
+.ticket-modal-head h3 svg { width: 22px; height: 22px; color: #fff; }
+.ticket-modal-close {
+  display: grid; place-items: center;
+  width: 32px; height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  transition: background .12s;
+}
+.ticket-modal-close:hover { background: rgba(255, 255, 255, .1); }
+.ticket-modal-close svg { width: 18px; height: 18px; }
+
+.ticket-carousel-area {
+  position: relative;
+  margin: 0 16px;
+  flex: 1; min-height: 0;
+}
+.ticket-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  background: rgba(0, 0, 0, .25);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  z-index: 2;
+  transition: background .12s;
+}
+.ticket-arrow:hover { background: rgba(0, 0, 0, .35); }
+.ticket-arrow svg { width: 18px; height: 18px; }
+.ticket-arrow.prev { left: -6px; }
+.ticket-arrow.next { right: -6px; }
+
+/* 캐러셀 트랙 — 인원수만큼 티켓을 가로로 나열, 스와이프/화살표/dot 으로 이동 */
+.ticket-track {
+  display: flex;
+  align-items: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.ticket-track::-webkit-scrollbar { display: none; }
+
+.ticket-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.ticket-track .ticket-card {
+  flex: 0 0 100%;
+  width: 100%;
+  scroll-snap-align: start;
+}
+
+/* 매수 표시 */
+.ticket-count {
+  font-size: 12px; font-weight: 700;
+  color: rgba(255, 255, 255, .7);
+}
+.ticket-seq {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 3px 10px;
+  background: #EAF4FE;
+  color: #1976D2;
+  border-radius: 999px;
+  font-size: 11.5px; font-weight: 800;
+  letter-spacing: .02em;
+}
+
+/* 로고 영역 */
+.ticket-logo-area {
+  padding: 22px 20px 12px;
+  text-align: center;
+  background: #fff;
+}
+.ticket-logo {
+  font-size: 22px; font-weight: 800;
+  color: #1976D2;
+  letter-spacing: -.02em;
+  margin-bottom: 10px;
+}
+.ticket-logo span { color: #1A1A1A; font-weight: 700; }
+.ticket-route-title {
+  font-size: 19px; font-weight: 800;
+  color: #1A1A1A;
+  letter-spacing: -.02em;
+  margin-bottom: 10px;
+  word-break: keep-all;
+  line-height: 1.3;
+}
+.ticket-help {
+  font-size: 11.5px;
+  color: #888;
+  background: #F3F4F6;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+/* 출도착 라인 */
+.ticket-route {
+  background: #21A9DF;
+  color: #fff;
+  padding: 14px 20px;
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.ticket-route-row {
+  display: flex; align-items: center;
+  gap: 12px;
+  font-size: 14px; font-weight: 700;
+}
+.ticket-route-icon {
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  background: #fff;
+  border-radius: 50%;
+  flex-shrink: 0;
+  color: #21A9DF;
+}
+.ticket-route-icon svg { width: 14px; height: 14px; }
+.ticket-route-name {
+  flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* QR 본문 */
+.ticket-body {
+  padding: 18px 20px 20px;
+  text-align: center;
+  background: #fff;
+}
+.ticket-code {
+  font-size: 13.5px; font-weight: 800;
+  color: #1A1A1A;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0;
+  margin-bottom: 14px;
+}
+.ticket-qr {
+  display: inline-block;
+  padding: 12px;
+  background: #fff;
+}
+.ticket-qr img {
+  width: 200px; height: 200px;
+  display: block;
+}
+
+/* 푸터 정보 */
+.ticket-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+  padding: 18px 20px;
+  background: #fff;
+  border-top: 1px dashed #E0E0E0;
+}
+.ticket-footer > div {
+  display: flex; flex-direction: column;
+  gap: 4px;
+}
+.ticket-label {
+  font-size: 11.5px; font-weight: 600;
+  color: #888;
+}
+.ticket-value {
+  font-size: 13.5px; font-weight: 700;
+  color: #1A1A1A;
+}
+
+/* 페이지네이션 닷 */
+.ticket-dots {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  padding: 14px 0 18px;
+}
+.ticket-dot {
+  width: 6px; height: 6px;
+  background: rgba(255, 255, 255, .3);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  transition: width .15s, background .15s;
+}
+.ticket-dot.active {
+  background: #fff;
+  width: 18px;
+  border-radius: 3px;
+}
+
+@media (max-width: 480px) {
+  .ticket-modal { max-width: 100%; }
+  .ticket-arrow.prev { left: -4px; }
+  .ticket-arrow.next { right: -4px; }
+  .ticket-qr img { width: 180px; height: 180px; }
+}
+
+/* ===========================================================
+   바우처 전체 화면 모달 (TMS 1.0 voucher 패턴 → TMS 2.0 디자인)
+   =========================================================== */
+.vch-modal-backdrop {
+  position: fixed; inset: 0;
+  background: #F5F7FA;
+  z-index: 1000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  animation: vchFade .2s;
+}
+@keyframes vchFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.vch-modal {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #fff;
+  box-shadow: 0 0 30px rgba(15, 23, 42, .06);
+}
+
+/* 상단 액션바 — 인쇄 시 숨김 */
+.vch-topbar {
+  position: sticky; top: 0;
+  z-index: 5;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  background: #fff;
+  border-bottom: 1px solid var(--co-border-soft);
+}
+.vch-topbar-left {
+  display: flex; align-items: center;
+  gap: 12px; min-width: 0;
+}
+.vch-topbar-logo { display: inline-flex; align-items: center; }
+.vch-topbar-logo:empty { display: none; }
+.vch-topbar-title {
+  font-size: 15px; font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.02em;
+}
+.vch-topbar-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 8px 12px;
+  border: 1px solid var(--co-border);
+  border-radius: 8px;
+  background: var(--co-surface);
+  color: var(--co-text-1);
+  font-size: 12.5px; font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color .12s, color .12s, background .12s;
+}
+.vch-topbar-btn:hover { border-color: var(--co-primary); color: var(--co-primary); }
+.vch-topbar-btn:disabled { opacity: .6; cursor: default; pointer-events: none; }
+.vch-topbar-btn svg { width: 13px; height: 13px; }
+.vch-topbar-btn.print {
+  background: var(--co-primary);
+  border-color: var(--co-primary);
+  color: #fff;
+}
+.vch-topbar-btn.print:hover { background: var(--co-primary-strong); border-color: var(--co-primary-strong); color: #fff; }
+
+/* 인쇄 영역 */
+.vch-print-area {
+  padding: 32px 40px 60px;
+  display: flex; flex-direction: column;
+  gap: 24px;
+}
+
+/* Hero — 브랜드 + 제목 + 예약번호 */
+.vch-hero {
+  text-align: center;
+  padding: 24px 0 28px;
+  border-bottom: 2px solid var(--co-text-1);
+}
+.vch-hero-brand {
+  font-size: 16px; font-weight: 800;
+  color: var(--co-primary-strong);
+  letter-spacing: -.01em;
+  margin-bottom: 8px;
+}
+.vch-hero-title {
+  font-size: 28px; font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.03em;
+  margin: 0 0 20px;
+}
+.vch-hero-num {
+  display: inline-flex; align-items: center;
+  gap: 12px;
+  padding: 12px 22px;
+  background: var(--co-primary-soft);
+  border-radius: 10px;
+}
+.vch-hero-label {
+  font-size: 11.5px; font-weight: 700;
+  color: var(--co-primary-strong);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.vch-hero-code {
+  font-size: 18px; font-weight: 800;
+  color: var(--co-text-1);
+  font-family: ui-monospace, monospace;
+  letter-spacing: -.01em;
+}
+
+/* 섹션 */
+.vch-section {
+  display: flex; flex-direction: column;
+  gap: 14px;
+}
+.vch-section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 16px; font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.02em;
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--co-border);
+}
+.vch-section-title::before {
+  content: '';
+  width: 4px; height: 14px;
+  background: var(--co-primary);
+  border-radius: 2px;
+}
+
+/* 정보 grid (row 형식) */
+.vch-info-grid {
+  display: flex; flex-direction: column;
+  gap: 8px;
+}
+.vch-row {
+  display: flex; align-items: baseline;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--co-bg);
+  border-radius: 6px;
+  font-size: 13px;
+}
+.vch-row-label {
+  flex-shrink: 0;
+  min-width: 80px;
+  font-size: 11.5px; font-weight: 700;
+  color: var(--co-text-3);
+  letter-spacing: .02em;
+}
+.vch-row-value {
+  flex: 1; min-width: 0;
+  color: var(--co-text-1); font-weight: 600;
+  word-break: break-all;
+}
+.vch-row-value a { color: var(--co-primary); text-decoration: none; }
+.vch-row-value a:hover { text-decoration: underline; }
+.vch-row-strong {
+  font-size: 15px; font-weight: 800;
+  color: var(--co-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 여정/상품 카드 */
+.vch-trip-stack { display: flex; flex-direction: column; gap: 14px; }
+.vch-trip-card {
+  border: 1px solid var(--co-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.vch-trip-head {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px;
+  color: var(--co-text-2);
+}
+.vch-trip-head strong {
+  font-size: 13.5px; font-weight: 700;
+  color: var(--co-primary);
+  font-variant-numeric: tabular-nums;
+}
+.vch-trip-chip {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px;
+  background: var(--co-primary-soft);
+  border-radius: 999px;
+  font-size: 10.5px; font-weight: 700;
+  color: var(--co-primary-strong);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.vch-trip-name {
+  font-size: 16px; font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.02em;
+}
+.vch-trip-body {
+  display: flex; flex-direction: column;
+  gap: 6px;
+}
+
+/* QR 섹션 */
+.vch-qr-section { align-items: stretch; }
+.vch-qr-box {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px;
+  padding: 28px;
+  background: var(--co-bg);
+  border-radius: 12px;
+}
+.vch-qr-img {
+  width: 240px; height: 240px;
+  background: #fff;
+  padding: 14px;
+  border-radius: 8px;
+}
+.vch-qr-num {
+  font-size: 14px; font-weight: 800;
+  color: var(--co-text-1);
+  font-family: ui-monospace, monospace;
+  letter-spacing: -.01em;
+}
+.vch-qr-desc {
+  font-size: 12.5px;
+  color: var(--co-text-2);
+  margin: 0;
+}
+
+/* 정류장 카드 */
+.vch-platform-card {
+  border: 1px solid var(--co-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex; flex-direction: column;
+  gap: 10px;
+}
+.vch-platform-head {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px;
+}
+.vch-platform-head svg { width: 16px; height: 16px; color: var(--co-primary); flex-shrink: 0; }
+.vch-platform-head strong {
+  color: var(--co-text-1); font-weight: 800;
+  letter-spacing: -.01em;
+}
+.vch-platform-info {
+  display: flex; flex-direction: column;
+  gap: 4px;
+}
+.vch-platform-img {
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--co-bg);
+  aspect-ratio: 16 / 9;
+}
+.vch-platform-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 여정별 탑승 QR (여정 카드 내부) */
+/* 탑승 QR — 인원수만큼 표시 */
+.vch-trip-qr-head {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--co-border);
+  font-size: 12.5px; font-weight: 800;
+  color: var(--co-text-1);
+}
+.vch-trip-qr-count {
+  font-size: 11px; font-weight: 700;
+  color: var(--co-primary);
+}
+.vch-trip-qr-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.vch-trip-qr {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--co-border);
+  border-radius: 10px;
+  background: var(--co-bg);
+}
+.vch-trip-qr-img {
+  width: 108px; height: 108px;
+  flex-shrink: 0;
+  background: #fff;
+  padding: 8px;
+  border: 1px solid var(--co-border);
+  border-radius: 8px;
+}
+.vch-trip-qr-meta {
+  display: flex; flex-direction: column;
+  gap: 4px; min-width: 0;
+}
+.vch-trip-qr-label {
+  font-size: 12.5px; font-weight: 800;
+  color: var(--co-text-1);
+  letter-spacing: -.01em;
+}
+.vch-trip-qr-seq {
+  font-size: 10.5px; font-weight: 700;
+  color: var(--co-text-3);
+}
+.vch-trip-qr-code {
+  font-size: 12px; font-weight: 700;
+  color: var(--co-primary);
+  font-family: ui-monospace, monospace;
+  word-break: break-all;
+}
+.vch-trip-qr-desc {
+  font-size: 11.5px;
+  color: var(--co-text-2);
+}
+
+/* 이용안내 / 환불규정 */
+.vch-notice ul {
+  margin: 0; padding-left: 18px;
+  font-size: 12.5px; line-height: 1.7;
+  color: var(--co-text-2);
+}
+.vch-notice li { margin-bottom: 4px; }
+
+/* ============================================================
+   인쇄용 스타일
+   ============================================================ */
+@media print {
+  body * { visibility: hidden; }
+  .vch-modal-backdrop, .vch-modal-backdrop * { visibility: visible; }
+  .vch-modal-backdrop {
+    position: absolute; left: 0; top: 0;
+    background: #fff;
+    overflow: visible;
+  }
+  .vch-modal { box-shadow: none; }
+  .vch-topbar { display: none !important; }
+  .vch-print-area { padding: 16px 20px 40px; }
+  .vch-section { page-break-inside: avoid; }
+  .vch-qr-section { page-break-after: always; }
+  .vch-hero { padding: 12px 0 16px; }
+  .vch-hero-title { font-size: 22px; }
+}
+
+/* 모바일 */
+@media (max-width: 600px) {
+  .vch-print-area { padding: 20px 16px 40px; }
+  .vch-hero-title { font-size: 22px; }
+  .vch-hero-code { font-size: 15px; }
+  .vch-qr-img { width: 200px; height: 200px; }
+  .vch-row-label { min-width: 64px; }
+}
+
+/* ===========================================================
+   예약 상세 (reservation-detail.html) — co-* / bc-* 위에 얹는 페이지 전용
+   =========================================================== */
+/* 헤더 행 — 뒤로가기(좌) + 바우처(우) */
+.rd-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 0 0 16px 0;
+  border-bottom: 1px solid var(--co-border);
+}
+/* 페이지 헤더형 뒤로가기 — 화살표 + 굵은 제목 */
+.rd-back {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 24px 0;
+  background: none; border: none;
+  font-size: 19px; font-weight: 800; color: var(--co-text-1, #1A1A1A);
+  letter-spacing: -.02em; cursor: pointer;
+}
+.rd-header .rd-back { padding: 0; }
+.rd-back svg { width: 22px; height: 22px; }
+
+/* 예약 번호 — 예약 정보 카드 상단 */
+.rd-ordernum {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 14px; margin-bottom: 14px;
+  border-bottom: 1px solid var(--co-border-soft, #F1F2F4);
+}
+.rd-ordernum-label { font-size: 12px; font-weight: 700; color: var(--co-text-3, #94A3B8); flex-shrink: 0; }
+.rd-ordernum-value { font-size: 15px; font-weight: 800; color: var(--co-text-1, #1A1A1A); }
+
+/* 예약상태 배지 — 예약 정보 섹션 타이틀 우측 끝 */
+.rd-status {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 999px;
+  font-size: 12.5px; font-weight: 800;
+}
+.rd-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.rd-status.confirmed { background: #DBEAFE; color: #1D4ED8; }
+.rd-status.pending   { background: #FEF3C7; color: #B45309; }
+.rd-status.done      { background: #E2E8F0; color: #475569; }
+.rd-status.cancelled { background: #FEE2E2; color: #DC2626; }
+
+.co-sum-route-name + .co-sum-stops { margin-top: 8px; }
+
+/* 액션 버튼이 하나만 있을 때 전체폭 (이용완료/예약취소 — 메인으로 제외) */
+.bc-actions.rd-actions-single { grid-template-columns: 1fr; }
+
+/* 좌측 패널(mp-layout) 안에 들어갈 때 상세 콘텐츠는 컬럼 전체폭 사용 */
+.mp-main .bc-page { max-width: none; }
+
+/* 예약 취소 모달 */
+.rd-cancel-q { font-size: 14.5px; font-weight: 700; color: var(--co-text-1, #1A1A1A); margin: 0 0 12px; }
+.rd-cancel-policy {
+  max-height: 240px; overflow-y: auto;
+  border: 1px solid var(--co-border-soft, #F1F2F4);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--co-bg, #F8FAFC);
+}
+.rd-cancel-policy ul { margin: 0; }

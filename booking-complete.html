@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>예약 완료</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/preview.css">
+<link rel="stylesheet" href="css/modals.css">
+<link rel="stylesheet" href="css/builder.css">
+<link rel="stylesheet" href="css/search-results.css">
+<link rel="stylesheet" href="css/booking-panel.css">
+<link rel="stylesheet" href="css/checkout.css">
+<style>
+  body { --t-primary: #2563EB; --t-primary-strong: #1D4ED8; --t-text: #1A1A1A; --t-text-2: #555; --t-bg: #FAFAFA; --t-surface: #FFFFFF; --t-radius: 6px;
+         --topbar-h: 0px; --panel-l: 0px; --panel-r: 0px; }
+  .ps-mnav-backdrop[data-sc-injected] { position: fixed !important; inset: 0 !important; }
+  /* 상품 데이터(이용안내·환불규정) HTML 렌더용 리치 텍스트 */
+  .co-rich { font-size: 13px; line-height: 1.7; color: var(--co-text-2, #475569); word-break: break-word; }
+  .co-rich p { margin: 0 0 8px; }
+  .co-rich p:last-child { margin-bottom: 0; }
+  .co-rich b, .co-rich strong { color: var(--co-text-1, #0F172A); font-weight: 700; }
+  .co-rich a { color: var(--co-primary, #2563EB); text-decoration: none; }
+  .co-rich a:hover { text-decoration: underline; }
+  .co-rich blockquote { margin: 8px 0; padding: 8px 12px; border-left: 3px solid var(--co-border, #E5E7EB); color: var(--co-text-2, #475569); }
+</style>
+</head>
+<body>
+
+<div id="srSiteHeader" data-active-page=""></div>
+
+<main class="co-page">
+  <div class="bc-page">
+
+    <!-- 성공 메시지 -->
+    <div class="bc-success">
+      <div class="bc-success-icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="32" cy="32" r="28"/>
+          <polyline points="20 33 28 41 44 24"/>
+        </svg>
+      </div>
+      <h1 class="bc-success-title">예약이 완료되었습니다</h1>
+      <p class="bc-success-desc">예약 확인 정보를 이메일로 발송했습니다.<br>예약내역은 마이페이지에서 다시 확인할 수 있습니다.</p>
+    </div>
+
+    <!-- 예약 번호 -->
+    <div class="bc-card bc-card-num-wrap">
+      <span class="bc-card-label">예약 번호</span>
+      <span class="bc-card-num" id="bcOrderNum">—</span>
+
+    </div>
+
+    <!-- 1) 나의 예약 (체크아웃 사이드바 정보) -->
+    <section class="co-section">
+      <h2 class="co-section-title">나의 예약</h2>
+      <div class="co-card" id="bcOrderSummary"></div>
+    </section>
+
+    <!-- 2) 예약자 정보 -->
+    <section class="co-section">
+      <h2 class="co-section-title">예약자 정보</h2>
+      <div class="co-card" id="bcBuyerInfo"></div>
+    </section>
+
+    <!-- 3) 이용안내 및 유의사항 -->
+    <section class="co-section">
+      <h2 class="co-section-title">이용안내 및 유의사항</h2>
+      <div class="co-card co-notice" id="bcNotice"></div>
+    </section>
+
+    <!-- 4) 취소 및 환불규정 -->
+    <section class="co-section">
+      <h2 class="co-section-title">취소 및 환불규정</h2>
+      <div class="co-card co-notice" id="bcRefund"></div>
+    </section>
+
+    <!-- 액션 버튼 -->
+    <div class="bc-actions">
+      <a class="bc-btn outline" href="index.html">메인으로</a>
+      <a class="bc-btn primary" href="javascript:void(0)" id="bcBookingsBtn">예약 내역 보기</a>
+    </div>
+
+  </div>
+</main>
+
+<div id="srSiteFooter"></div>
+<script src="js/api-client.js"></script>
+
+<script src="js/site-chrome.js"></script>
+<script>
+(async function() {
+  function esc(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, c =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function fmt(v) { return '₩ ' + Number(v).toLocaleString('ko-KR'); }
+
+  /* sessionStorage 에서 주문 정보 읽기 */
+  let order = null;
+  try {
+    const raw = sessionStorage.getItem('TMS_ORDER');
+    order = raw ? JSON.parse(raw) : null;
+  } catch (e) {}
+
+  /* 예약 번호 */
+  const params = new URLSearchParams(location.search);
+
+  /* sessionStorage 가 없으면(새 탭·공유 링크·새로고침) ?order=/?rn= 으로 백엔드 바우처 조회 폴백 */
+  if (!order) {
+    const rn = params.get('rn') || params.get('order');
+    if (rn && typeof loadGuestOrderByRn === 'function') {
+      order = await loadGuestOrderByRn(rn);
+    }
+  }
+
+  const orderNum = (order && order.orderNum) || params.get('order') || '—';
+  document.getElementById('bcOrderNum').textContent = orderNum;
+
+  /* 1) 나의 예약 — source 에 따라 분기 */
+  const orderHost = document.getElementById('bcOrderSummary');
+  if (!order) {
+    orderHost.innerHTML = '<div class="bc-empty">예약 정보를 불러올 수 없습니다.</div>';
+  } else if (order.source === 'product') {
+    // 상품 주문 (에버랜드 등)
+    const combos = (order.product.combinations || []).map(c =>
+      `<div><span>${esc(c.label)} × ${c.qty}</span><strong>${fmt(c.price * c.qty)}</strong></div>`
+    ).join('');
+    const inputs = (order.product.inputs || []).map(i =>
+      `<div class="co-sum-addon-row info"><span class="co-sum-addon-name">${esc(i.name)}</span><strong>${esc(i.value)}</strong></div>`
+    ).join('');
+    orderHost.innerHTML = `
+      <div class="co-sum-journey">
+        ${order.product.visitDate ? `<div class="co-sum-head"><span class="co-journey-chip">사용일</span><span class="co-sum-date">${esc(order.product.visitDate)}</span></div>` : ''}
+        <div class="co-sum-route-name">${esc(order.product.name)}</div>
+        <div class="co-sum-spec">${combos}</div>
+        ${inputs ? `<div class="co-sum-addons"><div class="co-sum-addons-label">예약 정보</div>${inputs}</div>` : ''}
+      </div>
+      <div class="co-summary-totals" style="margin-top:14px;">
+        <div class="co-sum-line total"><span>총 결제금액</span><strong>${fmt(order.total)}</strong></div>
+        ${order.payment ? `<div class="co-sum-line pm"><span>결제수단</span><strong>${esc(order.payment.label)}</strong></div>` : ''}
+      </div>
+    `;
+  } else {
+    // 노선 주문 (route checkout)
+    const journeys = (order.journeys || []).map(j => {
+      const fareRows = (j.fares || []).map(f =>
+        `<div><span>${esc(f.type)} × ${f.qty}</span><strong>${fmt(f.price * f.qty)}</strong></div>`
+      ).join('');
+      const addonRows = (j.selectedAddons || []).length > 0
+        ? `<div class="co-sum-addons">
+            <div class="co-sum-addons-label">추가 상품</div>
+            ${j.selectedAddons.map(a => `
+              <div class="co-sum-addon-row">
+                <span class="co-sum-addon-name">${esc(a.name)} × ${a.qty || 1}${a.date ? ` <span class="co-sum-addon-date">${esc(a.date)}</span>` : ''}</span>
+                <strong>${fmt(a.price * (a.qty || 1))}</strong>
+              </div>
+            `).join('')}
+          </div>`
+        : '';
+      return `
+        <div class="co-sum-journey">
+          <div class="co-sum-head">
+            <span class="co-journey-chip">여정 ${String(j.idx).padStart(2,'0')}</span>
+            <span class="co-sum-date">${esc(j.date)} ${esc(j.time)}</span>
+            <button type="button" class="bc-action-btn" data-ticket-journey="${j.idx}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M9 6v12"/></svg>
+              QR 티켓
+            </button>
+          </div>
+          <div class="co-sum-route-name">${esc(j.routeName)}</div>
+          <div class="co-sum-stops">
+            <div class="co-sum-stop-row">
+              <span class="co-sum-stop-label">출발</span>
+              <span class="co-sum-stop-name">${esc(j.pickup || '')}</span>
+              <button type="button" class="route-stop-loc" data-stop-info="${esc(j.pickup || '')}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                <span>정류장 정보</span>
+              </button>
+            </div>
+            <div class="co-sum-stop-row">
+              <span class="co-sum-stop-label">도착</span>
+              <span class="co-sum-stop-name">${esc(j.arrival || '')}</span>
+              <button type="button" class="route-stop-loc" data-stop-info="${esc(j.arrival || '')}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                <span>정류장 정보</span>
+              </button>
+            </div>
+          </div>
+          <div class="co-sum-spec">
+            ${fareRows}
+            <div><span>좌석</span><strong>${
+              j.seatType === '지정석' && Array.isArray(j.selectedSeats) && j.selectedSeats.length
+                ? esc(j.selectedSeats.join(', '))
+                : esc(j.seatType)
+            }</strong></div>
+          </div>
+          ${addonRows}
+        </div>
+      `;
+    }).join('');
+    orderHost.innerHTML = `
+      ${journeys}
+      <div class="co-summary-totals" style="margin-top:14px;">
+        <div class="co-sum-line total"><span>총 결제금액</span><strong>${fmt(order.total)}</strong></div>
+        ${order.payment ? `<div class="co-sum-line pm"><span>결제수단</span><strong>${esc(order.payment.label)}</strong></div>` : ''}
+      </div>
+    `;
+  }
+
+  /* 2) 예약자 정보 */
+  const buyer = (order && order.buyer) || {};
+  document.getElementById('bcBuyerInfo').innerHTML = `
+    <div class="bc-info">
+      <div class="bc-info-row"><span class="bc-info-label">이름</span><strong class="bc-info-value">${esc(buyer.lastName || '') + esc(buyer.firstName || '') || '—'}</strong></div>
+      <div class="bc-info-row"><span class="bc-info-label">전화번호</span><strong class="bc-info-value">${buyer.phone ? `${esc(buyer.phoneCode || '')} ${esc(buyer.phone)}` : '—'}</strong></div>
+      <div class="bc-info-row"><span class="bc-info-label">이메일</span><strong class="bc-info-value">${esc(buyer.email || '—')}</strong></div>
+    </div>
+  `;
+
+  /* 3) 이용안내 및 유의사항 / 4) 취소 및 환불규정
+     - 상품 주문: 상품 데이터(bookingNoticeKo / refundPolicyKo) 우선 렌더
+     - 데이터 없으면 source 별 기본 안내문구로 폴백 */
+  const isProduct = order && order.source === 'product';
+  const productNotice = isProduct ? (order.product.bookingNoticeKo || '').trim() : '';
+  const productRefund = isProduct ? (order.product.refundPolicyKo  || '').trim() : '';
+
+  const noticeEl = document.getElementById('bcNotice');
+  if (productNotice) {
+    noticeEl.classList.add('co-rich');
+    noticeEl.innerHTML = productNotice;
+  } else {
+    noticeEl.innerHTML = isProduct
+      ? `<ul>
+          <li>입장권은 결제 완료 후 <b>모바일 QR 티켓</b>으로 발송됩니다.</li>
+          <li>입장 시 <b>방문 예정일 당일</b>에만 사용 가능하며, 게이트에서 QR을 제시해주세요.</li>
+          <li>키 90cm 미만 어린이는 <b>보호자 동반 시 무료 입장</b>입니다.</li>
+          <li>우천·강설 시에도 정상 운영되며, 일부 시설은 안전 점검으로 운영이 제한될 수 있습니다.</li>
+          <li>외부 음식물·반려동물 입장은 제한됩니다.</li>
+          <li>고객센터 : <a href="tel:1588-1588">1588-1588</a> &nbsp;| Email : <a href="mailto:ticket@everland.com">ticket@everland.com</a></li>
+        </ul>`
+      : `<ul>
+          <li>예약은 <b>탑승 1일 전 16시까지</b> 예약 가능합니다.</li>
+          <li>예약은 <b>건별로 대인 4명, 소인 2명까지</b> 가능합니다. 인원이 초과될 경우, 나누어 예약해 주세요.</li>
+          <li>소인 기준은 13세 미만(초등학생)까지 해당됩니다.</li>
+          <li>모든 차량은 정시에 출발합니다. 탑승 장소에 <b>5분 전까지</b> 오셔서 셔틀에 탑승해 주세요.</li>
+          <li>좌석은 지정석이 아니며, 오시는 순서대로 탑승해 주세요.</li>
+          <li>경유지는 예약 및 교통 상황에 따라 생략될 수 있습니다.</li>
+          <li>고객센터(대명관광) : <a href="tel:031-765-7965">031-765-7965</a> &nbsp;| Email : <a href="mailto:dmbus66@naver.com">dmbus66@naver.com</a></li>
+        </ul>`;
+  }
+
+  const refundEl = document.getElementById('bcRefund');
+  if (productRefund) {
+    refundEl.classList.add('co-rich');
+    refundEl.innerHTML = productRefund;
+  } else {
+    refundEl.innerHTML = isProduct
+      ? `<ul>
+          <li class="danger"><b>방문 예정일 1일 전 23:59까지 취소 시 전액 환불</b>됩니다. 당일 취소·노쇼는 환불이 불가합니다.</li>
+          <li>미사용 입장권은 <b>방문 예정일 다음 날까지</b> 환불 신청 가능합니다 (사용 이력 확인 후 처리).</li>
+          <li>다수 매수 결제 후 부분 환불은 불가능하며, 전체 결제 단위로만 환불됩니다.</li>
+          <li>Q-PASS·식사 쿠폰 등 부가 서비스는 입장권과 함께만 환불 가능합니다.</li>
+          <li>환불은 결제수단으로 영업일 기준 3~5일 이내 처리됩니다.</li>
+        </ul>`
+      : `<ul>
+          <li class="danger"><b>탑승 1일 전 16시 전까지 취소 가능 및 전액 환불되며, 이후부터 (노쇼 포함) 환불 불가합니다.</b></li>
+          <li>예약 완료 후 스케줄(일정) 변경 불가하며, 취소 후 재 예약하셔야 합니다.</li>
+          <li>예약 취소 후 결제 카드사로 환불 확인은 영업일 기준 3~5일정도 소요됩니다.</li>
+          <li>※ 고객센터(대명관광) : <a href="tel:031-765-7965">031-765-7965</a> &nbsp;| Email : <a href="mailto:dmbus66@naver.com">dmbus66@naver.com</a></li>
+        </ul>`;
+  }
+
+  /* "예약 내역 보기" — 마이페이지 예약 내역으로 이동 (회원 전용).
+     TMS-A-118: 비회원(미로그인)은 마이페이지 접근 불가 → 버튼 비노출, '메인으로' 1개로 정렬 */
+  const bcBookingsBtn = document.getElementById('bcBookingsBtn');
+  let _bcLoggedIn = false;
+  try { _bcLoggedIn = sessionStorage.getItem('TMS_SC_LOGGED_IN') === '1'; } catch (e) {}
+  if (bcBookingsBtn) {
+    if (_bcLoggedIn) {
+      bcBookingsBtn.addEventListener('click', () => {
+        window.location.href = 'profile.html?tab=reservations';
+      });
+    } else {
+      bcBookingsBtn.remove();
+      document.querySelector('.bc-actions')?.classList.add('rd-actions-single');
+    }
+  }
+
+  /* 바우처 — voucher.html 새창으로 열기 (sessionStorage 의 TMS_ORDER 는 새 탭에 복제됨) */
+  document.getElementById('bcVoucherBtn')?.addEventListener('click', () => {
+    window.open('voucher.html', '_blank');
+  });
+
+  /* QR 티켓 모달 — 여정별 [QR 티켓] 클릭 → 인원수만큼 carousel */
+  document.addEventListener('click', e => {
+    const tBtn = e.target.closest('[data-ticket-journey]');
+    if (!tBtn) return;
+    e.stopPropagation();
+    const idx = parseInt(tBtn.dataset.ticketJourney, 10);
+    const journey = (order && order.journeys || []).find(j => j.idx === idx);
+    if (!journey) return;
+    openTicketModal(journey);
+  });
+
+  let _tkCurrentIdx = 0;
+  let _tkTickets = [];
+  function openTicketModal(journey) {
+    closeTicketModal();
+    // 인원수 × 운임 타입 으로 티켓 배열 생성
+    _tkTickets = [];
+    (journey.fares || []).forEach(f => {
+      for (let i = 0; i < f.qty; i++) {
+        const code = 'GK-' + Math.floor(Math.random() * 999999).toString().padStart(6, '0')
+                 + '-' + Math.floor(Math.random() * 999999).toString().padStart(6, '0')
+                 + '-' + Math.floor(Math.random() * 9999999).toString().padStart(7, '0');
+        _tkTickets.push({
+          code,
+          fareType: f.type,
+          seat: journey.seatType === '지정석' && journey.selectedSeats && journey.selectedSeats[_tkTickets.length]
+                ? journey.selectedSeats[_tkTickets.length]
+                : journey.seatType,
+          date: journey.date,
+          time: journey.time,
+          pickup: journey.pickup,
+          arrival: journey.arrival,
+          routeName: journey.routeName
+        });
+      }
+    });
+    if (_tkTickets.length === 0) {
+      _tkTickets.push({
+        code: 'GK-000000-000000-0000000',
+        fareType: '-',
+        seat: journey.seatType || '-',
+        date: journey.date, time: journey.time,
+        pickup: journey.pickup, arrival: journey.arrival,
+        routeName: journey.routeName
+      });
+    }
+    _tkCurrentIdx = 0;
+
+    const html = `
+      <div class="ticket-modal-backdrop" id="bcTicketModal">
+        <div class="ticket-modal">
+          <div class="ticket-modal-head">
+            <h3>셔틀승차권${_tkTickets.length > 1 ? ` <span class="ticket-count">(총 ${_tkTickets.length}매)</span>` : ''}</h3>
+            <button type="button" class="ticket-modal-close" data-tk-close aria-label="닫기">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="ticket-carousel-area">
+            ${_tkTickets.length > 1 ? `
+              <button type="button" class="ticket-arrow prev" data-tk-nav="-1" aria-label="이전 티켓">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button type="button" class="ticket-arrow next" data-tk-nav="1" aria-label="다음 티켓">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            ` : ''}
+            <div class="ticket-track" id="bcTicketTrack">
+              ${_tkTickets.map((t, i) => ticketCardHtml(t, i)).join('')}
+            </div>
+          </div>
+          ${_tkTickets.length > 1 ? `
+            <div class="ticket-dots" id="bcTicketDots"></div>
+          ` : ''}
+        </div>
+      </div>`;
+    document.body.insertAdjacentHTML('beforeend', html);
+    document.body.style.overflow = 'hidden';
+    renderDots();
+
+    const root = document.getElementById('bcTicketModal');
+    const track = document.getElementById('bcTicketTrack');
+
+    function goTo(i) {
+      _tkCurrentIdx = (i + _tkTickets.length) % _tkTickets.length;
+      const card = track && track.children[_tkCurrentIdx];
+      if (card) track.scrollTo({ left: card.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+      renderDots();
+    }
+    // 스와이프/스크롤 시 활성 dot 동기화
+    let scrollRaf = null;
+    track && track.addEventListener('scroll', () => {
+      if (scrollRaf) return;
+      scrollRaf = requestAnimationFrame(() => {
+        scrollRaf = null;
+        const i = Math.round(track.scrollLeft / track.clientWidth);
+        if (i !== _tkCurrentIdx) { _tkCurrentIdx = i; renderDots(); }
+      });
+    });
+
+    root.addEventListener('click', e => {
+      if (e.target === root || e.target.closest('[data-tk-close]')) { closeTicketModal(); return; }
+      const navBtn = e.target.closest('[data-tk-nav]');
+      if (navBtn) { goTo(_tkCurrentIdx + parseInt(navBtn.dataset.tkNav, 10)); return; }
+      const dot = e.target.closest('[data-tk-dot]');
+      if (dot) { goTo(parseInt(dot.dataset.tkDot, 10)); }
+    });
+  }
+  function ticketCardHtml(t, i) {
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=0&data=${encodeURIComponent(t.code)}`;
+    const dayLabel = (() => {
+      const d = new Date(t.date);
+      const days = ['일','월','화','수','목','금','토'];
+      return isNaN(d.getTime()) ? '' : `(${days[d.getDay()]})`;
+    })();
+    const dateDisplay = t.date ? `${t.date.replace(/-/g, '.')}${dayLabel}` : '-';
+    const countBadge = _tkTickets.length > 1 ? `<div class="ticket-seq">${i + 1} / ${_tkTickets.length}</div>` : '';
+    return `
+      <div class="ticket-card">
+        <div class="ticket-logo-area">
+          ${countBadge}
+          <div class="ticket-route-title">${esc(t.routeName || '-')}</div>
+          <div class="ticket-help">탑승 시 QR 코드를 제시해주세요</div>
+        </div>
+        <div class="ticket-route">
+          <div class="ticket-route-row">
+            <span class="ticket-route-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </span>
+            <span class="ticket-route-name">${esc(t.pickup || '-')}</span>
+          </div>
+          <div class="ticket-route-row">
+            <span class="ticket-route-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+            </span>
+            <span class="ticket-route-name">${esc(t.arrival || '-')}</span>
+          </div>
+        </div>
+        <div class="ticket-body">
+          <div class="ticket-code">${esc(t.code)}</div>
+          <div class="ticket-qr"><img src="${esc(qrUrl)}" alt="QR Code" loading="lazy"></div>
+        </div>
+        <div class="ticket-footer">
+          <div><span class="ticket-label">출발일</span><span class="ticket-value">${esc(dateDisplay)}</span></div>
+          <div><span class="ticket-label">시간</span><span class="ticket-value">${esc(t.time || '-')}</span></div>
+          <div><span class="ticket-label">구분</span><span class="ticket-value">셔틀 티켓</span></div>
+          <div><span class="ticket-label">좌석</span><span class="ticket-value">${esc(t.seat)}</span></div>
+        </div>
+      </div>`;
+  }
+  function renderDots() {
+    const dots = document.getElementById('bcTicketDots');
+    if (!dots) return;
+    dots.innerHTML = _tkTickets.map((_, i) =>
+      `<button type="button" class="ticket-dot${i === _tkCurrentIdx ? ' active' : ''}" data-tk-dot="${i}" aria-label="${i+1}번 티켓"></button>`
+    ).join('');
+  }
+  function closeTicketModal() {
+    const m = document.getElementById('bcTicketModal');
+    if (m) m.remove();
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeTicketModal();
+  });
+
+  /* 정류장 정보 모달 — 출/도착 [정류장 정보] 버튼 클릭 */
+  const STOP_INFO = {
+    address: '서울특별시 마포구 양화로 178',
+    subtitle: '비발디파크 전용 승하차장',
+    detail: '출발 5분 전까지 도착해 주세요. 정확한 위치는 주소 옆 [위치 보기] 를 통해 확인할 수 있습니다.',
+    image: 'https://lh3.googleusercontent.com/gps-cs-s/APNQkAFx-9LsSY11UKvGhKgktfeE7MOm1YjC7yYdGH-FdBGRwHuVBO3rPpsbUEBftEhVhAcyNwctg1CSycn_OWaTd1zwPfozZT7ZFftx7gVOePs-c2hc7X8iLiS4SKVreDJkDi6JMcIJtQ=w408-h306-k-no'
+  };
+  function openStopInfo(name) {
+    closeStopInfo();
+    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(STOP_INFO.address)}`;
+    const html = `
+      <div class="ps-modal-backdrop show" id="bcStopInfoModal">
+        <div class="ps-modal ps-stop-modal" role="dialog" aria-modal="true">
+          <button type="button" class="ps-modal-close" data-stop-close aria-label="닫기">×</button>
+          <div class="ps-stop-head"><h3>${esc(name)}</h3></div>
+          <div class="ps-stop-scroll">
+            <div class="ps-stop-image"><img src="${esc(STOP_INFO.image)}" alt="${esc(name)}"></div>
+            <div class="ps-stop-body">
+              <div class="ps-stop-subtitle">${esc(STOP_INFO.subtitle)}</div>
+              <div class="ps-stop-detail">${esc(STOP_INFO.detail)}</div>
+            </div>
+          </div>
+          <div class="ps-stop-footer">
+            <a class="ps-stop-map-btn" href="${esc(mapUrl)}" target="_blank" rel="noopener noreferrer">위치 보기</a>
+          </div>
+        </div>
+      </div>`;
+    document.body.insertAdjacentHTML('beforeend', html);
+    const root = document.getElementById('bcStopInfoModal');
+    document.body.style.overflow = 'hidden';
+    root.addEventListener('click', e => {
+      if (e.target === root || e.target.closest('[data-stop-close]')) closeStopInfo();
+    });
+  }
+  function closeStopInfo() {
+    const m = document.getElementById('bcStopInfoModal');
+    if (m) m.remove();
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-stop-info]');
+    if (btn) { e.stopPropagation(); openStopInfo(btn.dataset.stopInfo); }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeStopInfo();
+  });
+})();
+</script>
+
+</body>
+</html>
